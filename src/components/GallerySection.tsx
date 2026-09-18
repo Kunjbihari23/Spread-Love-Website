@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Image, Maximize2, Tag, Filter } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Image, Maximize2 } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { GALLERY_DATA } from '../data/mockData';
 import { GalleryItem } from '../types';
 
@@ -9,6 +10,7 @@ interface GallerySectionProps {
 
 export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage }) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const sectionRef = useRef<HTMLElement>(null);
 
   const categories = [
     { id: 'all', label: 'All Media' },
@@ -23,11 +25,47 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage })
     return item.category === activeCategory;
   });
 
+  // Photo scatter — tiles tumble in with slight rotation
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-gal="header"] > *', {
+        y: 24,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-gal="item"]', {
+        scale: 0.88,
+        opacity: 0,
+        rotation: (i) => (i % 2 === 0 ? -4 : 4),
+        stagger: { each: 0.07, from: 'center' },
+        duration: 0.55,
+        ease: 'back.out(1.3)',
+        scrollTrigger: { trigger: '[data-gal="grid"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const items = sectionRef.current?.querySelectorAll('[data-gal="item"]');
+    if (!items?.length) return;
+    gsap.fromTo(
+      items,
+      { scale: 0.92, opacity: 0, rotation: (i: number) => (i % 2 === 0 ? -3 : 3) },
+      { scale: 1, opacity: 1, rotation: 0, stagger: 0.05, duration: 0.4, ease: 'power2.out' }
+    );
+  }, [activeCategory]);
+
   return (
-    <section id="gallery" className="py-16 sm:py-24 bg-slate-50/70 relative">
+    <section ref={sectionRef} id="gallery" className="py-16 sm:py-24 bg-slate-50/70 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-12">
+        <div data-gal="header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-12">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider mb-2">
               <Image className="w-3.5 h-3.5" />
@@ -60,10 +98,11 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage })
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div data-gal="grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredItems.map((item) => (
             <div
               key={item.id}
+              data-gal="item"
               onClick={() => onSelectImage(item)}
               className="group cursor-pointer rounded-3xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >

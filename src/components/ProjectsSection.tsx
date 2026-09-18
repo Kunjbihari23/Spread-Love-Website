@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Sparkles, Star, Layers, ArrowRight, Eye } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Star, Layers, ArrowRight, Eye } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { PROJECTS_DATA } from '../data/mockData';
 import { Project } from '../types';
 
@@ -9,6 +10,7 @@ interface ProjectsSectionProps {
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectProject }) => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const sectionRef = useRef<HTMLElement>(null);
 
   const categories = [
     { id: 'all', label: 'All Projects' },
@@ -23,11 +25,48 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectProjec
     return p.tag === activeFilter;
   });
 
+  // Toy-shelf: cards hop onto shelf from below
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-pj="header"] > *', {
+        y: 24,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-pj="card"]', {
+        y: 56,
+        opacity: 0,
+        rotation: 2,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'back.out(1.4)',
+        scrollTrigger: { trigger: '[data-pj="grid"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
+  // Re-animate cards when filter changes
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cards = sectionRef.current?.querySelectorAll('[data-pj="card"]');
+    if (!cards?.length) return;
+    gsap.fromTo(
+      cards,
+      { y: 24, opacity: 0, scale: 0.96 },
+      { y: 0, opacity: 1, scale: 1, stagger: 0.06, duration: 0.4, ease: 'power2.out' }
+    );
+  }, [activeFilter]);
+
   return (
-    <section id="projects" className="py-16 sm:py-24 bg-white relative">
+    <section ref={sectionRef} id="projects" className="py-16 sm:py-24 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header and Filter Controls */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-14">
+        <div data-pj="header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-14">
           <div className="space-y-2.5 max-w-2xl">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
               <Layers className="w-3.5 h-3.5" />
@@ -60,10 +99,11 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectProjec
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div data-pj="grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredProjects.map((project) => (
             <div
               key={project.id}
+              data-pj="card"
               onClick={() => onSelectProject(project)}
               className="cursor-pointer rounded-3xl overflow-hidden bg-slate-50 hover:bg-white border border-slate-200 hover:border-pink-300 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
             >

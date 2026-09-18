@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Heart, Sparkles, Star, Smile, Volume2, ArrowRight } from 'lucide-react';
-import gsap from 'gsap';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { CHARACTERS_DATA } from '../data/mockData';
 import { Character } from '../types';
 
@@ -10,6 +10,7 @@ interface CharactersSectionProps {
 
 export const CharactersSection: React.FC<CharactersSectionProps> = ({ onSelectCharacter }) => {
   const [activeQuoteId, setActiveQuoteId] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   // Sound effect and GSAP animation simulation for character click
   const handleSimulateSound = (e: React.MouseEvent, charId: string) => {
@@ -32,15 +33,57 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({ onSelectCh
   const emphasizedCharacters = CHARACTERS_DATA.filter((c) => c.specialEmphasis);
   const regularCharacters = CHARACTERS_DATA.filter((c) => !c.specialEmphasis);
 
+  // Doll parade: header fade-up, hero cards from left/right, roster pop-stagger
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-ch="header"] > *', {
+        y: 28,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.utils.toArray<HTMLElement>('[data-ch="hero-card"]').forEach((el, i) => {
+        gsap.from(el, {
+          x: i % 2 === 0 ? -60 : 60,
+          opacity: 0,
+          duration: 0.65,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: ST.toggleActions,
+          },
+        });
+      });
+
+      gsap.from('[data-ch="roster-card"]', {
+        scale: 0.85,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.5,
+        ease: 'back.out(1.5)',
+        scrollTrigger: {
+          trigger: '[data-ch="roster"]',
+          start: 'top 85%',
+          toggleActions: ST.toggleActions,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   return (
-    <section id="characters" className="py-16 sm:py-24 bg-white relative overflow-hidden">
+    <section ref={sectionRef} id="characters" className="py-16 sm:py-24 bg-white relative overflow-hidden">
       {/* Background soft shapes */}
       <div className="absolute top-0 right-0 w-80 sm:w-96 h-80 sm:h-96 bg-pink-100/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 sm:w-96 h-80 sm:h-96 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2.5 sm:space-y-3">
+        <div data-ch="header" className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2.5 sm:space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
             <Heart className="w-3.5 h-3.5 fill-pink-500 text-pink-500" />
             <span>Beloved Companions & Magical Friends</span>
@@ -71,6 +114,7 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({ onSelectCh
             {emphasizedCharacters.map((char) => (
               <div
                 key={char.id}
+                data-ch="hero-card"
                 onClick={() => onSelectCharacter(char)}
                 className={`cursor-pointer rounded-3xl p-5 sm:p-8 bg-gradient-to-br ${
                   char.id === 'spread-love-doll'
@@ -147,7 +191,7 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({ onSelectCh
         </div>
 
         {/* Regular Friends Roster */}
-        <div>
+        <div data-ch="roster">
           <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 font-display mb-5 sm:mb-6">
             The Extended Creative Family
           </h3>
@@ -156,6 +200,7 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({ onSelectCh
             {regularCharacters.map((char) => (
               <div
                 key={char.id}
+                data-ch="roster-card"
                 onClick={() => onSelectCharacter(char)}
                 className="cursor-pointer rounded-3xl p-5 bg-slate-50 hover:bg-white border border-slate-200 hover:border-pink-300 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
               >

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { BookOpen, Calendar, Clock, ArrowRight, Sparkles } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { BLOG_POSTS_DATA } from '../data/mockData';
 import { BlogPost } from '../types';
 
@@ -8,11 +9,40 @@ interface BlogSectionProps {
 }
 
 export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Journal open: callout from left, articles from right
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-blog="callout"]', {
+        x: -40,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-blog="card"]', {
+        x: 40,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '[data-blog="grid"]',
+          start: 'top 88%',
+          toggleActions: ST.toggleActions,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   return (
-    <section id="blog" className="py-16 sm:py-24 bg-white relative">
+    <section ref={sectionRef} id="blog" className="py-16 sm:py-24 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Callout Header with Highlighted Direct Access */}
-        <div className="p-5 sm:p-8 md:p-12 rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-950 text-white shadow-xl mb-10 sm:mb-16 relative overflow-hidden">
+        <div data-blog="callout" className="p-5 sm:p-8 md:p-12 rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-950 text-white shadow-xl mb-10 sm:mb-16 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 sm:w-96 h-80 sm:h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8">
@@ -43,10 +73,11 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
         </div>
 
         {/* Recent Article Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div data-blog="grid" className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {BLOG_POSTS_DATA.map((post) => (
             <div
               key={post.id}
+              data-blog="card"
               onClick={() => onSelectPost(post)}
               className="cursor-pointer rounded-3xl overflow-hidden bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-indigo-300 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
             >

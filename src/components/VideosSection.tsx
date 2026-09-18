@@ -1,5 +1,6 @@
-import React from 'react';
-import { Play, Film, Clock, Eye, Sparkles } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Play, Film, Clock, Eye } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { VIDEOS_DATA } from '../data/mockData';
 import { VideoItem } from '../types';
 
@@ -8,18 +9,61 @@ interface VideosSectionProps {
 }
 
 export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => {
+  const sectionRef = useRef<HTMLElement>(null);
   const featuredVideo = VIDEOS_DATA.find((v) => v.featured) || VIDEOS_DATA[0];
   const otherVideos = VIDEOS_DATA.filter((v) => v.id !== featuredVideo.id);
 
+  // Curtain open — premiere scales in, play pulse, seats fill
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-vid="header"] > *', {
+        y: 28,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-vid="featured"]', {
+        y: 48,
+        scale: 0.94,
+        opacity: 0,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '[data-vid="featured"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+
+      gsap.from('#featured-video-play-btn', {
+        scale: 0.6,
+        opacity: 0,
+        duration: 0.5,
+        ease: 'back.out(2)',
+        delay: 0.15,
+        scrollTrigger: { trigger: '[data-vid="featured"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+
+      gsap.from('[data-vid="card"]', {
+        y: 40,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '[data-vid="grid"]', start: 'top 88%', toggleActions: ST.toggleActions },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   return (
-    <section id="videos" className="py-16 sm:py-24 bg-slate-950 text-white relative overflow-hidden">
+    <section ref={sectionRef} id="videos" className="py-16 sm:py-24 bg-slate-950 text-white relative overflow-hidden">
       {/* Ambient background glows */}
       <div className="absolute top-1/4 -left-20 w-80 sm:w-96 h-80 sm:h-96 bg-pink-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 -right-20 w-80 sm:w-96 h-80 sm:h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-2.5 sm:space-y-3">
+        <div data-vid="header" className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-2.5 sm:space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-500/20 text-pink-400 text-xs font-bold uppercase tracking-wider border border-pink-500/30">
             <Film className="w-3.5 h-3.5" />
             <span>Cinematic & Story Reels</span>
@@ -33,7 +77,7 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
         </div>
 
         {/* Featured Large Hero Video Card */}
-        <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl mb-10 sm:mb-12 group">
+        <div data-vid="featured" className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl mb-10 sm:mb-12 group">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
             {/* Thumbnail side with big play button */}
             <div className="lg:col-span-7 relative aspect-16/10 lg:aspect-auto lg:h-[440px] overflow-hidden bg-black">
@@ -97,10 +141,11 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
         </div>
 
         {/* Video Grid for Other Videos */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        <div data-vid="grid" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {otherVideos.map((vid) => (
             <div
               key={vid.id}
+              data-vid="card"
               onClick={() => onPlayVideo(vid)}
               className="cursor-pointer rounded-3xl overflow-hidden bg-slate-900 border border-slate-800/90 shadow-md hover:border-pink-500/50 hover:shadow-xl transition-all duration-300 flex flex-col group"
             >

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Youtube, Instagram, Facebook, ArrowUpRight, Heart, Share2, BookOpen, ExternalLink, Sparkles } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { SOCIAL_CHANNELS_DATA, OLD_WEBSITE_ARCHIVE } from '../data/mockData';
 
 interface SocialSectionProps {
@@ -7,11 +8,66 @@ interface SocialSectionProps {
 }
 
 export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Connection pulse: header, chips scale, channels y, archive y
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-soc="header"] > *', {
+        y: 28,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-soc="chip"]', {
+        scale: 0.7,
+        opacity: 0,
+        stagger: 0.07,
+        duration: 0.45,
+        ease: 'back.out(1.5)',
+        scrollTrigger: {
+          trigger: '[data-soc="flow"]',
+          start: 'top 85%',
+          toggleActions: ST.toggleActions,
+        },
+      });
+
+      gsap.from('[data-soc="channel"]', {
+        y: 36,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '[data-soc="channels"]',
+          start: 'top 88%',
+          toggleActions: ST.toggleActions,
+        },
+      });
+
+      gsap.from('[data-soc="archive"]', {
+        y: 30,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '[data-soc="archive"]',
+          start: 'top 90%',
+          toggleActions: ST.toggleActions,
+        },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   return (
-    <section id="social" className="py-16 sm:py-24 bg-slate-50/80 relative">
+    <section ref={sectionRef} id="social" className="py-16 sm:py-24 bg-slate-50/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2.5 sm:space-y-3">
+        <div data-soc="header" className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2.5 sm:space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
             <Share2 className="w-3.5 h-3.5" />
             <span>Community & Content Flow</span>
@@ -25,16 +81,17 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
         </div>
 
         {/* Content Flow Ecosystem Diagram / Hub Map */}
-        <div className="mb-12 sm:mb-14 p-5 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xs">
+        <div data-soc="flow" className="mb-12 sm:mb-14 p-5 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xs">
           <p className="text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 sm:mb-6">
             Ecosystem Content Flow: Move Seamlessly Between Channels
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-bold">
-            <span className="px-3.5 sm:px-4 py-2 rounded-xl bg-pink-600 text-white shadow-xs">
+            <span data-soc="chip" className="px-3.5 sm:px-4 py-2 rounded-xl bg-pink-600 text-white shadow-xs">
               ★ Official Website Hub
             </span>
             <span className="text-slate-300 font-bold hidden sm:inline">➔</span>
             <a
+              data-soc="chip"
               href="https://youtube.com"
               target="_blank"
               rel="noopener noreferrer"
@@ -44,6 +101,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
             </a>
             <span className="text-slate-300 font-bold hidden sm:inline">➔</span>
             <a
+              data-soc="chip"
               href="#blog"
               className="px-3.5 sm:px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-colors flex items-center gap-1.5"
             >
@@ -51,6 +109,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
             </a>
             <span className="text-slate-300 font-bold hidden sm:inline">➔</span>
             <a
+              data-soc="chip"
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
@@ -60,6 +119,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
             </a>
             <span className="text-slate-300 font-bold hidden sm:inline">➔</span>
             <a
+              data-soc="chip"
               href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
@@ -69,6 +129,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
             </a>
             <span className="text-slate-300 font-bold hidden sm:inline">➔</span>
             <button
+              data-soc="chip"
               onClick={onOpenArchive}
               className="px-3.5 sm:px-4 py-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors flex items-center gap-1.5"
             >
@@ -78,9 +139,9 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
         </div>
 
         {/* 3 Main Social Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12">
+        <div data-soc="channels" className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12">
           {/* YouTube Card */}
-          <div className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
+          <div data-soc="channel" className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
@@ -127,7 +188,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
           </div>
 
           {/* Instagram Card */}
-          <div className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
+          <div data-soc="channel" className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center">
@@ -174,7 +235,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
           </div>
 
           {/* Facebook Parents Community Card */}
-          <div className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
+          <div data-soc="channel" className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
@@ -222,7 +283,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
         </div>
 
         {/* Vintage Old Website Archive Callout Banner */}
-        <div className="rounded-3xl p-5 sm:p-8 bg-amber-50/80 border border-amber-200/90 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
+        <div data-soc="archive" className="rounded-3xl p-5 sm:p-8 bg-amber-50/80 border border-amber-200/90 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
           <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left w-full md:w-auto">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 text-2xl">
               ⏳

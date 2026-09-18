@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Sparkles, HeartHandshake, Play, ShieldCheck, Palette, Compass, Star, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { LOVE_WORLD_DATA, CHARACTERS_DATA, PROJECTS_DATA } from '../data/mockData';
+import React, { useState, useRef } from 'react';
+import { Sparkles, HeartHandshake, Play, ShieldCheck, Palette, Star, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { LOVE_WORLD_DATA, PROJECTS_DATA } from '../data/mockData';
 import { Character } from '../types';
 
 interface LoveWorldFeatureProps {
@@ -10,11 +11,12 @@ interface LoveWorldFeatureProps {
 
 export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
   onOpenVideo,
-  onSelectCharacter,
+  onSelectCharacter: _onSelectCharacter,
 }) => {
   const [activeIsland, setActiveIsland] = useState<number>(0);
   const [preRegistered, setPreRegistered] = useState(false);
   const [preRegEmail, setPreRegEmail] = useState('');
+  const sectionRef = useRef<HTMLElement>(null);
 
   const trailerPoster = PROJECTS_DATA[0]?.coverImage || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1920&q=85';
 
@@ -24,15 +26,64 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
     setPreRegistered(true);
   };
 
+  // Island-rise: trailer blooms open, pillars float up, map + CTA lift
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-lw="header"] > *', {
+        y: 30,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-lw="trailer"]', {
+        scale: 0.92,
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '[data-lw="trailer"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+
+      gsap.from('[data-lw="pillar"]', {
+        y: 50,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'back.out(1.3)',
+        scrollTrigger: { trigger: '[data-lw="pillars"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+
+      gsap.from('[data-lw="map"]', {
+        y: 36,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '[data-lw="map"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+
+      gsap.from('[data-lw="cta"]', {
+        scale: 0.94,
+        opacity: 0,
+        duration: 0.65,
+        ease: 'back.out(1.5)',
+        scrollTrigger: { trigger: '[data-lw="cta"]', start: 'top 90%', toggleActions: ST.toggleActions },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   return (
-    <section id="love-world" className="py-20 sm:py-24 bg-gradient-to-b from-white via-pink-50/40 to-slate-50 relative overflow-hidden">
+    <section ref={sectionRef} id="love-world" className="py-20 sm:py-24 bg-gradient-to-b from-white via-pink-50/40 to-slate-50 relative overflow-hidden">
       {/* Background Soft Blobs */}
       <div className="absolute top-1/3 -left-32 w-80 sm:w-96 h-80 sm:h-96 bg-pink-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 -right-32 w-80 sm:w-96 h-80 sm:h-96 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3">
+        <div data-lw="header" className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-pink-600" />
             <span>{LOVE_WORLD_DATA.tagline}</span>
@@ -48,7 +99,7 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
         </div>
 
         {/* Flagship Hero Video / Gameplay Showcase Frame - Consuming 100% Full Width */}
-        <div className="mb-14 w-full">
+        <div data-lw="trailer" className="mb-14 w-full">
           <div className="w-full relative rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white bg-slate-950 group aspect-16/10 sm:aspect-16/9 min-h-[300px] sm:min-h-[440px] lg:min-h-[520px]">
             <img
               src={trailerPoster}
@@ -112,10 +163,11 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
         </div>
 
         {/* 4 Core Pillars of LOVE WORLD */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-14 sm:mb-16">
+        <div data-lw="pillars" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-14 sm:mb-16">
           {LOVE_WORLD_DATA.keyPillars.map((pillar, idx) => (
             <div
               key={idx}
+              data-lw="pillar"
               className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow"
             >
               <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl ${pillar.color} flex items-center justify-center mb-3 sm:mb-4`}>
@@ -135,7 +187,7 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
         </div>
 
         {/* Interactive Floating Islands Map Tour */}
-        <div className="p-5 sm:p-8 md:p-10 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl mb-14 sm:mb-16">
+        <div data-lw="map" className="p-5 sm:p-8 md:p-10 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl mb-14 sm:mb-16">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6 mb-6 pb-6 border-b border-slate-800">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-pink-400">
@@ -213,7 +265,7 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
         </div>
 
         {/* Pre-register & VIP Kids Pass Banner */}
-        <div className="rounded-3xl p-6 sm:p-8 md:p-10 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-xl text-center max-w-4xl mx-auto">
+        <div data-lw="cta" className="rounded-3xl p-6 sm:p-8 md:p-10 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-xl text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider mb-3">
             <Star className="w-3.5 h-3.5 fill-white text-white" />
             <span>Join the 10-Year Anniversary Beta List</span>

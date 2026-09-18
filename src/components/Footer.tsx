@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Heart, Sparkles, Youtube, Instagram, Facebook, BookOpen, ExternalLink, Mail, CheckCircle2, ArrowRight } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 
 interface FooterProps {
   onOpenArchive: () => void;
@@ -8,6 +9,7 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState('');
+  const sectionRef = useRef<HTMLElement>(null);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,15 +17,30 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
     setSubscribed(true);
   };
 
+  // Soft goodbye: columns fade-up stagger
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-ft="col"]', {
+        y: 28,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   return (
-    <footer className="bg-slate-900 text-white pt-16 sm:pt-20 pb-10 sm:pb-12 relative overflow-hidden border-t-4 border-pink-500">
+    <footer ref={sectionRef} className="bg-slate-900 text-white pt-16 sm:pt-20 pb-10 sm:pb-12 relative overflow-hidden border-t-4 border-pink-500">
       {/* Decorative top soft glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-pink-500/10 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-12 pb-12 sm:pb-16 border-b border-slate-800">
           {/* Brand & Mission Column */}
-          <div className="lg:col-span-4 space-y-4">
+          <div data-ft="col" className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-400 to-amber-400 flex items-center justify-center shadow-md">
                 <Heart className="w-5 h-5 text-white fill-white" />
@@ -81,7 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
           </div>
 
           {/* Quick Navigation 1 */}
-          <div className="lg:col-span-2 space-y-3">
+          <div data-ft="col" className="lg:col-span-2 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-pink-400">
               Explore Hub
             </h4>
@@ -115,7 +132,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
           </div>
 
           {/* Quick Navigation 2: Characters & Media */}
-          <div className="lg:col-span-3 space-y-3">
+          <div data-ft="col" className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400">
               Characters & Content
             </h4>
@@ -153,7 +170,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
           </div>
 
           {/* Newsletter / Club signup */}
-          <div className="lg:col-span-3 space-y-3">
+          <div data-ft="col" className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
               Family Club Newsletter
             </h4>

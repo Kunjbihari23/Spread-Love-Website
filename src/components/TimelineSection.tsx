@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, ChevronRight, Sparkles, Award, Star, Compass, ArrowRight, Heart } from 'lucide-react';
-import gsap from 'gsap';
+import { Calendar, Sparkles, Star, ArrowRight } from 'lucide-react';
+import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
 import { TIMELINE_DATA } from '../data/mockData';
 import { Milestone } from '../types';
 
@@ -10,15 +10,50 @@ interface TimelineSectionProps {
 
 export const TimelineSection: React.FC<TimelineSectionProps> = () => {
   const [selectedYear, setSelectedYear] = useState<string>('2024');
+  const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
   const currentMilestone =
     TIMELINE_DATA.find((m) => m.year === selectedYear) || TIMELINE_DATA[0];
 
+  // Journey-path scroll reveal — years march in like milestones on a path
+  useGSAP(() => {
+    const mm = whenMotionOk(() => {
+      gsap.from('[data-tl="header"] > *', {
+        y: 28,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.55,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      });
+
+      gsap.from('[data-tl="year"]', {
+        x: -40,
+        opacity: 0,
+        scale: 0.85,
+        stagger: 0.06,
+        duration: 0.45,
+        ease: 'back.out(1.4)',
+        scrollTrigger: { trigger: '[data-tl="years"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      });
+
+      gsap.from(cardRef.current, {
+        y: 48,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: cardRef.current, start: 'top 88%', toggleActions: ST.toggleActions },
+      });
+    });
+    return () => mm.revert();
+  }, { scope: sectionRef });
+
   // GSAP animation when switching timeline years
   useEffect(() => {
     if (!cardRef.current) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     gsap.fromTo(
       cardRef.current,
       { opacity: 0.5, y: 15, scale: 0.98 },
@@ -27,13 +62,13 @@ export const TimelineSection: React.FC<TimelineSectionProps> = () => {
   }, [selectedYear]);
 
   return (
-    <section id="timeline" className="py-16 sm:py-20 bg-slate-50/70 relative overflow-hidden">
+    <section ref={sectionRef} id="timeline" className="py-16 sm:py-20 bg-slate-50/70 relative overflow-hidden">
       {/* Decorative dots pattern */}
       <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#ec4899_1px,transparent_1px)] [background-size:24px_24px]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 space-y-2.5 sm:space-y-3">
+        <div ref={headerRef} data-tl="header" className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 space-y-2.5 sm:space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
             <Calendar className="w-3.5 h-3.5" />
             <span>The 10-Year Creative Odyssey</span>
@@ -47,13 +82,14 @@ export const TimelineSection: React.FC<TimelineSectionProps> = () => {
         </div>
 
         {/* Interactive Year Selector Bar (Horizontal Scroller with Pills) */}
-        <div className="relative mb-8 sm:mb-12">
+        <div className="relative mb-8 sm:mb-12" data-tl="years">
           <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-2.5 overflow-x-auto pb-3 pt-1 no-scrollbar px-1">
             {TIMELINE_DATA.map((milestone) => {
               const isActive = milestone.year === selectedYear;
               return (
                 <button
                   key={milestone.id}
+                  data-tl="year"
                   onClick={() => setSelectedYear(milestone.year)}
                   className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-sm shrink-0 transition-all flex flex-col items-center gap-0.5 border shadow-xs min-h-[50px] min-w-[70px] cursor-pointer ${
                     isActive

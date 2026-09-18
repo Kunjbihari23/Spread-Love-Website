@@ -7,6 +7,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function useLenisSmoothScroll() {
   useEffect(() => {
+    // Skip smooth scroll when user prefers reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
     // Initialize Lenis smooth scrolling with playful fluid easing
     const lenis = new Lenis({
       duration: 1.2,
