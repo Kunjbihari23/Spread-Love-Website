@@ -3,6 +3,9 @@ import { Play, Film, Clock, Eye } from 'lucide-react';
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { VIDEOS_DATA } from '../data/mockData';
 import { VideoItem } from '../types';
+import { SectionHeader } from './ui/SectionHeader';
+import { Card } from './ui/Card';
+import { Button } from './ui/Button';
 
 interface VideosSectionProps {
   onPlayVideo: (video: VideoItem) => void;
@@ -13,61 +16,72 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
   const featuredVideo = VIDEOS_DATA.find((v) => v.featured) || VIDEOS_DATA[0];
   const otherVideos = VIDEOS_DATA.filter((v) => v.id !== featuredVideo.id);
 
-  // Curtain open — premiere scales in, play pulse, seats fill
-  useGSAP(() => {
-    const mm = whenMotionOk(() => {
-      scrollReveal('[data-vid="header"] > *', { y: 18 }, {
-        trigger: sectionRef.current,
-        stagger: 0.08,
-        duration: 0.35,
-      });
+  // GSAP scroll reveals with reverse support on scroll re-entry
+  useGSAP(
+    () => {
+      const mm = whenMotionOk(() => {
+        scrollReveal('[data-vid="header"] > *', { y: 20 }, {
+          trigger: sectionRef.current,
+          stagger: 0.08,
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-vid="featured"]', { y: 28, scale: 0.96 }, {
-        trigger: '[data-vid="featured"]',
-        duration: 0.45,
-      });
+        scrollReveal('[data-vid="featured"]', { y: 28, scale: 0.96 }, {
+          trigger: '[data-vid="featured"]',
+          duration: 0.45,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('#featured-video-play-btn', { scale: 0.7 }, {
-        trigger: '[data-vid="featured"]',
-        duration: 0.4,
-        delay: 0.1,
-        ease: 'back.out(2)',
-      });
+        scrollReveal('#featured-video-play-btn', { scale: 0.7 }, {
+          trigger: '[data-vid="featured"]',
+          duration: 0.4,
+          delay: 0.1,
+          ease: 'back.out(2)',
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-vid="card"]', { y: 24 }, {
-        trigger: '[data-vid="grid"]',
-        stagger: 0.08,
-        duration: 0.4,
+        scrollReveal('[data-vid="card"]', { y: 24 }, {
+          trigger: '[data-vid="grid"]',
+          stagger: 0.08,
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
       });
-    });
-    return () => mm.revert();
-  }, { scope: sectionRef });
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section ref={sectionRef} id="videos" className="py-16 sm:py-24 bg-slate-950 text-white relative overflow-hidden">
-      {/* Ambient background glows */}
+    <section
+      ref={sectionRef}
+      id="videos"
+      className="py-16 sm:py-24 bg-slate-950 text-white relative overflow-hidden"
+    >
       <div className="absolute top-1/4 -left-20 w-80 sm:w-96 h-80 sm:h-96 bg-pink-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 -right-20 w-80 sm:w-96 h-80 sm:h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div data-vid="header" className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-2.5 sm:space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-500/20 text-pink-400 text-xs font-bold uppercase tracking-wider border border-pink-500/30">
-            <Film className="w-3.5 h-3.5" />
-            <span>Cinematic & Story Reels</span>
-          </div>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white font-display">
-            Video Premiere Theater
-          </h2>
-          <p className="text-slate-400 text-xs sm:text-base md:text-lg">
-            Watch official gameplay reveals, 10-year anniversary documentaries, animated shorts, and behind-the-scenes doll craftsmanship.
-          </p>
+        <div data-vid="header">
+          <SectionHeader
+            badge="Cinematic & Story Reels"
+            badgeIcon={<Film className="w-3.5 h-3.5 text-pink-400" />}
+            title={<span className="text-white">Video Premiere Theater</span>}
+            subtitle={
+              <span className="text-slate-400">
+                Watch official gameplay reveals, 10-year anniversary documentaries, animated shorts, and behind-the-scenes doll craftsmanship.
+              </span>
+            }
+          />
         </div>
 
         {/* Featured Large Hero Video Card */}
-        <div data-vid="featured" className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl mb-10 sm:mb-12 group">
+        <div
+          data-vid="featured"
+          className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl mb-10 sm:mb-12 group"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
-            {/* Thumbnail side with big play button */}
             <div className="lg:col-span-7 relative aspect-16/10 lg:aspect-auto lg:h-[440px] overflow-hidden bg-black">
               <img
                 src={featuredVideo.thumbnail}
@@ -79,7 +93,7 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
               <button
                 id="featured-video-play-btn"
                 onClick={() => onPlayVideo(featuredVideo)}
-                className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-pink-600 hover:bg-pink-500 text-white shadow-2xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
+                className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-pink-600 hover:bg-pink-500 text-white shadow-2xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Play Featured Video"
               >
                 <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white translate-x-0.5" />
@@ -91,7 +105,6 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
               </span>
             </div>
 
-            {/* Content side */}
             <div className="lg:col-span-5 p-5 sm:p-8 lg:p-10 space-y-3.5 sm:space-y-4">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-pink-500/20 text-pink-400 border border-pink-500/30">
@@ -116,13 +129,16 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
                   {featuredVideo.views}
                 </span>
 
-                <button
+                <Button
+                  variant="primary"
+                  size="md"
                   onClick={() => onPlayVideo(featuredVideo)}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 min-h-[44px]"
+                  icon={<Play className="w-3.5 h-3.5 fill-white" />}
+                  iconPosition="left"
+                  className="w-full sm:w-auto"
                 >
-                  <Play className="w-3.5 h-3.5 fill-white" />
-                  <span>Watch Video Now</span>
-                </button>
+                  Watch Video Now
+                </Button>
               </div>
             </div>
           </div>
@@ -131,13 +147,13 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
         {/* Video Grid for Other Videos */}
         <div data-vid="grid" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {otherVideos.map((vid) => (
-            <div
+            <Card
               key={vid.id}
               data-vid="card"
+              elevation="interactive"
               onClick={() => onPlayVideo(vid)}
-              className="cursor-pointer rounded-3xl overflow-hidden bg-slate-900 border border-slate-800/90 shadow-md hover:border-pink-500/50 hover:shadow-xl transition-all duration-300 flex flex-col group"
+              className="p-0 overflow-hidden cursor-pointer bg-slate-900 border-slate-800 flex flex-col group hover:border-pink-500/50"
             >
-              {/* Thumbnail */}
               <div className="relative aspect-16/9 overflow-hidden bg-black">
                 <img
                   src={vid.thumbnail}
@@ -161,10 +177,9 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
                 </span>
               </div>
 
-              {/* Info */}
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
                 <div>
-                  <h4 className="font-bold text-sm sm:text-base text-white font-display group-hover:text-pink-400 transition-colors line-clamp-2">
+                  <h4 className="font-bold text-sm sm:text-base text-white group-hover:text-pink-400 transition-colors line-clamp-2">
                     {vid.title}
                   </h4>
                   <p className="text-xs text-slate-400 mt-1 line-clamp-2">
@@ -177,7 +192,7 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
                   <span className="text-pink-400 font-semibold group-hover:underline">Play Now →</span>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

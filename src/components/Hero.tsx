@@ -3,6 +3,7 @@ import { Heart, Sparkles, Play, ArrowRight, Star, Compass, Smile } from 'lucide-
 import { gsap, useGSAP, whenMotionOk } from '../lib/motion';
 import { HERO_DATA, CHARACTERS_DATA, PROJECTS_DATA } from '../data/mockData';
 import { Character } from '../types';
+import { Button } from './ui/Button';
 
 interface HeroProps {
   onOpenVideo: () => void;
@@ -11,7 +12,9 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) => {
   const primaryCharacters = CHARACTERS_DATA.slice(0, 3); // Spread Love Doll, Belinha, Little Sheila
-  const heroArtwork = PROJECTS_DATA[0]?.coverImage || "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80";
+  const heroArtwork =
+    PROJECTS_DATA[0]?.coverImage ||
+    'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80';
 
   const heroSectionRef = useRef<HTMLElement>(null);
   const dollBadgeRef = useRef<HTMLButtonElement>(null);
@@ -20,118 +23,120 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
   const floatingStarRef = useRef<HTMLDivElement>(null);
   const floatingSmileRef = useRef<HTMLDivElement>(null);
 
-  // Love-bloom entrance + gentle float loops (unique to hero)
-  useGSAP(() => {
-    const mm = whenMotionOk(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.4 } });
+  // Love-bloom entrance + gentle float loops
+  useGSAP(
+    () => {
+      const mm = whenMotionOk(() => {
+        const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.4 } });
 
-      // Native timeline.fromTo — enterFrom() would play immediately and break sequencing
-      tl.fromTo(
-        '[data-hero="badge"]',
-        { autoAlpha: 0, y: -16 },
-        { autoAlpha: 1, y: 0, duration: 0.35, ease: 'back.out(1.6)' }
-      )
-        .fromTo(
-          '[data-hero="headline"]',
-          { autoAlpha: 0, y: 24 },
-          { autoAlpha: 1, y: 0 },
-          '-=0.15'
+        tl.fromTo(
+          '[data-hero="badge"]',
+          { autoAlpha: 0, y: -16 },
+          { autoAlpha: 1, y: 0, duration: 0.35, ease: 'back.out(1.6)' }
         )
-        .fromTo(
-          '[data-hero="sub"]',
-          { autoAlpha: 0, y: 14 },
-          { autoAlpha: 1, y: 0, duration: 0.35 },
-          '-=0.2'
-        )
-        .fromTo(
-          '[data-hero="cta"]',
-          { autoAlpha: 0, y: 16 },
-          { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.35 },
-          '-=0.15'
-        )
-        .fromTo(
-          '[data-hero="companions"]',
-          { autoAlpha: 0, y: 12 },
-          { autoAlpha: 1, y: 0, duration: 0.35 },
-          '-=0.12'
-        )
-        .fromTo(
-          '[data-hero="artwork"]',
-          { autoAlpha: 0, scale: 0.94, rotation: 4 },
-          { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45 },
-          '-=0.35'
-        )
-        .fromTo(
-          [dollBadgeRef.current, belinhaBadgeRef.current].filter(Boolean),
-          { autoAlpha: 0, scale: 0.6 },
-          { autoAlpha: 1, scale: 1, stagger: 0.08, duration: 0.4, ease: 'back.out(2)' },
-          '-=0.25'
-        );
+          .fromTo(
+            '[data-hero="headline"]',
+            { autoAlpha: 0, y: 24 },
+            { autoAlpha: 1, y: 0 },
+            '-=0.15'
+          )
+          .fromTo(
+            '[data-hero="sub"]',
+            { autoAlpha: 0, y: 14 },
+            { autoAlpha: 1, y: 0, duration: 0.35 },
+            '-=0.2'
+          )
+          .fromTo(
+            '[data-hero="cta"]',
+            { autoAlpha: 0, y: 16 },
+            { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.35 },
+            '-=0.15'
+          )
+          .fromTo(
+            '[data-hero="companions"]',
+            { autoAlpha: 0, y: 12 },
+            { autoAlpha: 1, y: 0, duration: 0.35 },
+            '-=0.12'
+          )
+          .fromTo(
+            '[data-hero="artwork"]',
+            { autoAlpha: 0, scale: 0.94, rotation: 4 },
+            { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45 },
+            '-=0.35'
+          )
+          .fromTo(
+            [dollBadgeRef.current, belinhaBadgeRef.current].filter(Boolean),
+            { autoAlpha: 0, scale: 0.6 },
+            { autoAlpha: 1, scale: 1, stagger: 0.08, duration: 0.4, ease: 'back.out(2)' },
+            '-=0.25'
+          );
 
-      if (dollBadgeRef.current) {
-        gsap.to(dollBadgeRef.current, {
-          y: -10,
-          rotation: 2,
-          duration: 2.8,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 0.6,
-        });
-      }
-      if (belinhaBadgeRef.current) {
-        gsap.to(belinhaBadgeRef.current, {
-          y: 8,
-          rotation: -2,
-          duration: 3.2,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 0.7,
-        });
-      }
-      if (floatingHeartRef.current) {
-        gsap.to(floatingHeartRef.current, {
-          y: -18,
-          x: 10,
-          rotation: 12,
-          duration: 4,
-          repeat: -1,
-          yoyo: true,
-          ease: 'power1.inOut',
-          delay: 0.6,
-        });
-      }
-      if (floatingStarRef.current) {
-        gsap.to(floatingStarRef.current, {
-          y: 20,
-          rotation: 360,
-          duration: 12,
-          repeat: -1,
-          ease: 'none',
-          delay: 0.6,
-        });
-      }
-      if (floatingSmileRef.current) {
-        gsap.to(floatingSmileRef.current, {
-          y: -14,
-          rotation: -8,
-          duration: 3.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 0.6,
-        });
-      }
-    });
-    return () => mm.revert();
-  }, { scope: heroSectionRef });
+        if (dollBadgeRef.current) {
+          gsap.to(dollBadgeRef.current, {
+            y: -10,
+            rotation: 2,
+            duration: 2.8,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: 0.6,
+          });
+        }
+        if (belinhaBadgeRef.current) {
+          gsap.to(belinhaBadgeRef.current, {
+            y: 8,
+            rotation: -2,
+            duration: 3.2,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: 0.7,
+          });
+        }
+        if (floatingHeartRef.current) {
+          gsap.to(floatingHeartRef.current, {
+            y: -18,
+            x: 10,
+            rotation: 12,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: 'power1.inOut',
+            delay: 0.6,
+          });
+        }
+        if (floatingStarRef.current) {
+          gsap.to(floatingStarRef.current, {
+            y: 20,
+            rotation: 360,
+            duration: 12,
+            repeat: -1,
+            ease: 'none',
+            delay: 0.6,
+          });
+        }
+        if (floatingSmileRef.current) {
+          gsap.to(floatingSmileRef.current, {
+            y: -14,
+            rotation: -8,
+            duration: 3.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: 0.6,
+          });
+        }
+      });
+      return () => mm.revert();
+    },
+    { scope: heroSectionRef }
+  );
 
   const handleCharacterHover = (el: HTMLElement | null) => {
     if (!el) return;
     gsap.to(el, {
-      scale: 1.1,
-      rotation: '+=6',
+      scale: 1.08,
+      rotation: '+=4',
       duration: 0.25,
       yoyo: true,
       repeat: 1,
@@ -145,14 +150,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
       id="hero"
       className="relative min-h-[92vh] pt-24 sm:pt-28 pb-14 sm:pb-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-rose-50/70 via-amber-50/40 to-white"
     >
-      {/* Decorative Subtle Floating Background Elements */}
+      {/* Background Orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Soft pastel ambient glow orbs */}
         <div className="absolute -top-24 -left-24 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-pink-300/25 blur-3xl" />
         <div className="absolute top-1/3 -right-24 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-amber-300/25 blur-3xl" />
         <div className="absolute -bottom-24 left-1/3 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-sky-300/25 blur-3xl" />
 
-        {/* Floating playful icons animated via GSAP */}
         <div ref={floatingHeartRef} className="absolute top-32 left-[8%] text-pink-400/60 hidden md:block">
           <Heart className="w-8 h-8 fill-pink-300/40" />
         </div>
@@ -169,64 +172,84 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-          {/* Left Column: Branding, 10-Year Statement, CTAs */}
+          {/* Left Column */}
           <div className="lg:col-span-7 text-center lg:text-left space-y-5 sm:space-y-6">
-            {/* 10-Year Anniversary Badge */}
-            <div data-hero="badge" className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-pink-100/90 text-pink-700 text-xs sm:text-sm font-bold border border-pink-200/80 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-600 animate-spin" style={{ animationDuration: '6s' }} />
+            <div
+              data-hero="badge"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-pink-100/90 text-pink-700 text-xs sm:text-sm font-bold border border-pink-200/80 shadow-xs"
+            >
+              <Sparkles
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-600 animate-spin"
+                style={{ animationDuration: '6s' }}
+              />
               <span>{HERO_DATA.anniversaryBadge}</span>
             </div>
 
-            {/* Core Immediate Headline */}
-            <h1 data-hero="headline" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] font-display">
+            <h1
+              data-hero="headline"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]"
+            >
               {HERO_DATA.headlinePrefix}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pink-600)] via-[var(--color-rose-500)] to-[var(--color-amber-500)]">
                 {HERO_DATA.headlineEmphasis}
               </span>{' '}
               {HERO_DATA.headlineSuffix}
             </h1>
 
-            {/* Subtext description */}
-            <p data-hero="sub" className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            <p
+              data-hero="sub"
+              className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium"
+            >
               {HERO_DATA.subtext}
             </p>
 
             {/* Action Buttons Hub */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
-              <a
+              <Button
                 data-hero="cta"
+                variant="primary"
+                size="lg"
                 href="#love-world"
-                className="w-full sm:w-auto px-6 sm:px-7 py-3.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 hover:from-pink-700 hover:to-amber-600 shadow-md shadow-pink-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group min-h-[44px]"
+                icon={<ArrowRight className="w-4 h-4" />}
+                className="w-full sm:w-auto"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>{HERO_DATA.primaryCta}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+                {HERO_DATA.primaryCta}
+              </Button>
 
-              <a
+              <Button
                 data-hero="cta"
+                variant="outline"
+                size="lg"
                 href="#timeline"
-                className="w-full sm:w-auto px-6 sm:px-7 py-3.5 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 min-h-[44px]"
+                icon={<Compass className="w-4 h-4 text-pink-500" />}
+                iconPosition="left"
+                className="w-full sm:w-auto bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
               >
-                <Compass className="w-4 h-4 text-pink-500" />
-                <span>{HERO_DATA.secondaryCta}</span>
-              </a>
+                {HERO_DATA.secondaryCta}
+              </Button>
 
-              <button
+              <Button
                 data-hero="cta"
-                id="hero-watch-story-btn"
+                variant="secondary"
+                size="lg"
                 onClick={onOpenVideo}
-                className="w-full sm:w-auto px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold text-pink-700 bg-gradient-to-r from-pink-50 via-rose-50 to-amber-50/60 hover:from-pink-100 hover:via-rose-100 hover:to-amber-100 border border-pink-200/90 hover:border-pink-300 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5 group min-h-[44px] cursor-pointer whitespace-nowrap"
+                icon={
+                  <span className="w-6 h-6 rounded-full bg-amber-950/10 flex items-center justify-center">
+                    <Play className="w-3 h-3 fill-amber-950 text-amber-950 translate-x-0.5" />
+                  </span>
+                }
+                iconPosition="left"
+                className="w-full sm:w-auto cursor-pointer"
               >
-                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-pink-600 to-rose-400 group-hover:from-pink-500 group-hover:to-rose-500 text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform shrink-0">
-                  <Play className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white text-white translate-x-0.5" />
-                </span>
-                <span className="font-extrabold tracking-tight">Watch Story Video</span>
-              </button>
+                Watch Story Video
+              </Button>
             </div>
 
-            {/* Micro Feature Icons / Quick Character Avatars */}
-            <div data-hero="companions" className="pt-4 border-t border-pink-100/60 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
+            {/* Companions Row */}
+            <div
+              data-hero="companions"
+              className="pt-4 border-t border-pink-100/60 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4"
+            >
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Beloved Companions:
               </span>
@@ -235,7 +258,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
                   <button
                     key={char.id}
                     onClick={() => onSelectCharacter(char)}
-                    className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl bg-white border border-pink-100 hover:border-pink-300 hover:shadow-xs transition-all text-xs font-semibold text-slate-700 group min-h-[40px]"
+                    className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl bg-white border border-pink-100 hover:border-pink-300 hover:shadow-sm transition-all text-xs font-semibold text-slate-700 group min-h-[40px] cursor-pointer"
                   >
                     <div className="w-6 h-6 rounded-full overflow-hidden bg-pink-100 shrink-0">
                       <img
@@ -251,11 +274,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
             </div>
           </div>
 
-          {/* Right Column: Hero Artwork Card with Elevated Floating Badges */}
+          {/* Right Column: Hero Artwork Box */}
           <div className="lg:col-span-5 relative w-full max-w-lg mx-auto lg:max-w-none pt-2 sm:pt-4">
-            {/* Interactive Main Hero Artwork Box */}
             <div data-hero="artwork" className="relative">
-              {/* Contained Media Frame with rounded corners and overflow hidden for zoom effect */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-900 group aspect-4/3 sm:aspect-square">
                 <img
                   src={heroArtwork}
@@ -264,14 +285,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
 
-                {/* Banner inside artwork - placed cleanly at the bottom */}
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-white/80 shadow-md z-10">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-pink-600 block">
                         Flagship Showcase
                       </span>
-                      <h3 className="font-extrabold text-sm sm:text-base text-slate-900 font-display truncate">
+                      <h3 className="font-extrabold text-sm sm:text-base text-slate-900 truncate">
                         LOVE WORLD
                       </h3>
                       <p className="text-[11px] sm:text-xs text-slate-600 line-clamp-1">
@@ -290,8 +310,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
                 </div>
               </div>
 
-              {/* Floating Character Badges - Positioned outside the overflow-hidden media frame so they are never clipped */}
-              {/* Badge 1: Spread Love Doll (Top Right) */}
+              {/* Floating Character Badges */}
               <button
                 ref={dollBadgeRef}
                 onMouseEnter={() => handleCharacterHover(dollBadgeRef.current)}
@@ -316,7 +335,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
                 </div>
               </button>
 
-              {/* Badge 2: Belinha the Dog (Middle-Left, safely above the bottom banner) */}
               <button
                 ref={belinhaBadgeRef}
                 onMouseEnter={() => handleCharacterHover(belinhaBadgeRef.current)}

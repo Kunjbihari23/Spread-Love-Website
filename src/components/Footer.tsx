@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Heart, Sparkles, Youtube, Instagram, Facebook, BookOpen, ExternalLink, Mail, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Heart, Youtube, Instagram, Facebook, BookOpen, ExternalLink, Mail, CheckCircle2 } from 'lucide-react';
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
+import { Button } from './ui/Button';
 
 interface FooterProps {
   onOpenArchive: () => void;
@@ -17,33 +18,39 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
     setSubscribed(true);
   };
 
-  // Soft goodbye: columns fade-up stagger
-  useGSAP(() => {
-    const mm = whenMotionOk(() => {
-      scrollReveal('[data-ft="col"]', { y: 18 }, {
-        trigger: sectionRef.current,
-        stagger: 0.08,
-        duration: 0.35,
+  // GSAP scroll reveals with reverse support on scroll re-entry
+  useGSAP(
+    () => {
+      const mm = whenMotionOk(() => {
+        scrollReveal('[data-ft="col"]', { y: 20 }, {
+          trigger: sectionRef.current,
+          stagger: 0.08,
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
       });
-    });
-    return () => mm.revert();
-  }, { scope: sectionRef });
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <footer ref={sectionRef} className="bg-slate-900 text-white pt-16 sm:pt-20 pb-10 sm:pb-12 relative overflow-hidden border-t-4 border-pink-500">
-      {/* Decorative top soft glow */}
+    <footer
+      ref={sectionRef}
+      className="bg-slate-900 text-white pt-16 sm:pt-20 pb-10 sm:pb-12 relative overflow-hidden border-t-4 border-pink-500"
+    >
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-pink-500/10 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-12 pb-12 sm:pb-16 border-b border-slate-800">
-          {/* Brand & Mission Column */}
+          {/* Brand Column */}
           <div data-ft="col" className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-400 to-amber-400 flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[var(--color-pink-500)] via-[var(--color-rose-500)] to-[var(--color-amber-400)] flex items-center justify-center shadow-md">
                 <Heart className="w-5 h-5 text-white fill-white" />
               </div>
               <div>
-                <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white font-display block">
+                <span className="font-black text-lg sm:text-xl tracking-tight text-white block">
                   LOVE WORLD
                 </span>
                 <span className="text-[10px] font-bold text-pink-400 uppercase tracking-wider">
@@ -94,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
             </div>
           </div>
 
-          {/* Quick Navigation 1 */}
+          {/* Quick Nav 1 */}
           <div data-ft="col" className="lg:col-span-2 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-pink-400">
               Explore Hub
@@ -128,7 +135,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
             </ul>
           </div>
 
-          {/* Quick Navigation 2: Characters & Media */}
+          {/* Quick Nav 2 */}
           <div data-ft="col" className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400">
               Characters & Content
@@ -157,7 +164,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
               <li>
                 <button
                   onClick={onOpenArchive}
-                  className="hover:text-amber-400 transition-colors text-left flex items-center gap-1.5 py-1"
+                  className="hover:text-amber-400 transition-colors text-left flex items-center gap-1.5 py-1 cursor-pointer"
                 >
                   <ExternalLink className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>Classic Archive (2014-2021)</span>
@@ -166,7 +173,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
             </ul>
           </div>
 
-          {/* Newsletter / Club signup */}
+          {/* Newsletter */}
           <div data-ft="col" className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
               Family Club Newsletter
@@ -193,24 +200,26 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
                     className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 min-h-[44px]"
                   />
                 </div>
-                <button
+                <Button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs transition-colors shadow-xs min-h-[44px]"
+                  variant="primary"
+                  size="sm"
+                  className="w-full"
                 >
                   Join Family Club
-                </button>
+                </Button>
               </form>
             )}
           </div>
         </div>
 
-        {/* Footer Bottom / Copyright / Credits */}
+        {/* Footer Bottom */}
         <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-center sm:text-left">
           <p>© 2014 – 2026 LOVE WORLD Creative Universe. All rights reserved. Handcrafted with love.</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <span className="text-slate-400">Frontend Prototype</span>
             <span>•</span>
-            <button onClick={onOpenArchive} className="hover:text-pink-400 transition-colors">
+            <button onClick={onOpenArchive} className="hover:text-pink-400 transition-colors cursor-pointer">
               Old Website Archive
             </button>
             <span>•</span>

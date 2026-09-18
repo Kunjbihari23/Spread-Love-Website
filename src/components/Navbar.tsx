@@ -1,5 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Heart, Sparkles, BookOpen, ExternalLink, ArrowRight, Compass, Layers, Users, Image, Film, PartyPopper, Share2, Youtube, Instagram, Facebook } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Menu,
+  X,
+  Heart,
+  Sparkles,
+  BookOpen,
+  ExternalLink,
+  ArrowRight,
+  Compass,
+  Layers,
+  Users,
+  Image,
+  Film,
+  PartyPopper,
+  Share2,
+  Youtube,
+  Instagram,
+  Facebook,
+} from 'lucide-react';
+import { Button } from './ui/Button';
+import { gsap } from '../lib/motion';
 
 interface NavbarProps {
   onOpenArchive: () => void;
@@ -7,10 +27,13 @@ interface NavbarProps {
   onOpenVideoHero?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, onOpenVideoHero }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  onOpenArchive,
+}) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('hero');
+  const headerRef = useRef<HTMLElement>(null);
 
   // Primary desktop nav items
   const navItems = [
@@ -24,20 +47,35 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
     { id: 'celebration', name: 'Celebration', href: '#celebration', icon: PartyPopper },
   ];
 
-  // Secondary/Community items for mobile drawer
-  const moreNavItems = [
-    { id: 'blog', name: 'Creator Blog', href: '#blog', icon: BookOpen },
-    { id: 'social', name: 'Community Hub', href: '#social', icon: Share2 },
-  ];
+  // GSAP Header reveal on load
+  useEffect(() => {
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { y: -80, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
+      );
+    }
+  }, []);
 
   // Scroll detection & Scroll Spy
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 15);
+      setScrolled(window.scrollY > 20);
 
-      // Simple active section detection
-      const sections = ['hero', 'timeline', 'love-world', 'projects', 'characters', 'gallery', 'videos', 'celebration', 'blog', 'social'];
-      const scrollPosition = window.scrollY + 120;
+      const sections = [
+        'hero',
+        'timeline',
+        'love-world',
+        'projects',
+        'characters',
+        'gallery',
+        'videos',
+        'celebration',
+        'blog',
+        'social',
+      ];
+      const scrollPosition = window.scrollY + 140;
 
       for (const sectionId of sections) {
         const el = document.getElementById(sectionId);
@@ -80,7 +118,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
     };
   }, [mobileMenuOpen]);
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
     e.preventDefault();
     setMobileMenuOpen(false);
     const target = document.querySelector(href);
@@ -91,10 +132,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
 
   return (
     <header
+      ref={headerRef}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'py-2.5 bg-white/95 backdrop-blur-md shadow-sm border-b border-pink-100/80'
-          : 'py-3.5 bg-white/80 backdrop-blur-md border-b border-pink-100/50'
+          ? 'py-2.5 bg-white/90 backdrop-blur-xl shadow-md border-b border-pink-100/80'
+          : 'py-4 bg-white/70 backdrop-blur-lg border-b border-pink-100/40'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -106,15 +148,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
             className="flex items-center gap-2.5 group shrink-0 focus:outline-none focus:ring-2 focus:ring-pink-400 rounded-2xl"
             aria-label="LOVE WORLD Home"
           >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-400 to-amber-400 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:shadow-md transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[var(--color-pink-500)] via-[var(--color-rose-500)] to-[var(--color-amber-400)] flex items-center justify-center shadow-md group-hover:scale-105 group-hover:shadow-pink-500/25 transition-all duration-300">
               <Heart className="w-5 h-5 text-white fill-white animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 font-display group-hover:text-pink-600 transition-colors">
+                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-pink-600 transition-colors">
                   LOVE WORLD
                 </span>
-                <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-pink-100 text-pink-700 border border-pink-200">
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 border border-pink-200">
                   10 YRS
                 </span>
               </div>
@@ -124,9 +166,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
             </div>
           </a>
 
-          {/* 2. Desktop Navigation Center Bar (Visible on lg and above) */}
+          {/* 2. Desktop Navigation Center Bar */}
           <nav
-            className="hidden lg:flex items-center gap-1 bg-slate-100/80 p-1 rounded-full border border-slate-200/80 shadow-xs"
+            className="hidden lg:flex items-center gap-1 bg-slate-100/80 p-1.5 rounded-full border border-slate-200/80 shadow-inner"
             aria-label="Main Navigation"
           >
             {navItems.map((item) => {
@@ -136,91 +178,96 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
                   key={item.id}
                   href={item.href}
                   onClick={(e) => handleLinkClick(e, item.href)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
                     isActive
-                      ? 'bg-white text-pink-600 shadow-xs border border-pink-200/60'
+                      ? 'bg-white text-pink-600 shadow-sm border border-pink-200/60 font-black'
                       : item.highlight
                       ? 'text-pink-600 hover:text-pink-700 hover:bg-white/60 font-extrabold'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  {item.highlight && <Sparkles className="w-3 h-3 text-pink-500" />}
+                  {item.highlight && (
+                    <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+                  )}
                   <span>{item.name}</span>
                 </a>
               );
             })}
           </nav>
 
-          {/* 3. Action Hub: Blog, Old Site & CTA Button */}
+          {/* 3. Action Hub */}
           <div className="hidden lg:flex items-center gap-2 shrink-0">
-            {/* Direct Blog Link Button */}
             <a
               href="#blog"
               onClick={(e) => handleLinkClick(e, '#blog')}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-indigo-700 bg-indigo-50/90 hover:bg-indigo-100 border border-indigo-200/80 transition-colors flex items-center gap-1.5 shadow-2xs"
+              className="px-3.5 py-2 rounded-full text-xs font-bold text-indigo-700 bg-indigo-50/90 hover:bg-indigo-100 border border-indigo-200/80 transition-all flex items-center gap-1.5 shadow-xs hover:shadow-sm"
             >
               <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
               <span>Blog</span>
             </a>
 
-            {/* Old Website Archive Modal Trigger */}
             <button
               id="nav-old-archive-btn"
               onClick={onOpenArchive}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-amber-800 bg-amber-50/90 hover:bg-amber-100 border border-amber-200/80 transition-colors flex items-center gap-1.5 shadow-2xs"
+              className="px-3.5 py-2 rounded-full text-xs font-bold text-amber-800 bg-amber-50/90 hover:bg-amber-100 border border-amber-200/80 transition-all flex items-center gap-1.5 shadow-xs hover:shadow-sm cursor-pointer"
               title="Jump to Vintage 2014-2021 Website Archive"
             >
               <ExternalLink className="w-3.5 h-3.5 text-amber-600" />
               <span>Old Site</span>
             </button>
 
-            {/* Flagship CTA Button */}
-            <a
+            <Button
+              variant="magic"
+              size="sm"
               href="#love-world"
-              onClick={(e) => handleLinkClick(e, '#love-world')}
-              className="px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 hover:from-pink-700 hover:to-amber-600 shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 transform hover:scale-[1.02] active:scale-95"
+              icon={<Sparkles className="w-3.5 h-3.5" />}
+              iconPosition="left"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Explore LOVE WORLD</span>
-            </a>
+              Explore LOVE WORLD
+            </Button>
           </div>
 
-          {/* 4. Mobile Controls (Under lg) */}
+          {/* 4. Mobile Controls */}
           <div className="flex items-center gap-2 lg:hidden">
-            {/* Quick Explore pill for mobile */}
             <a
               href="#love-world"
               onClick={(e) => handleLinkClick(e, '#love-world')}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-pink-600 to-rose-500 shadow-xs flex items-center gap-1"
+              className="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-pink-600 to-rose-500 shadow-sm flex items-center gap-1"
             >
               <Sparkles className="w-3 h-3" />
               <span>LOVE WORLD</span>
             </a>
 
-            {/* Hamburger / Close Button */}
             <button
               id="mobile-menu-toggle-btn"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-pink-600 hover:bg-pink-50 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-400"
-              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+              className="p-2.5 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-pink-600 hover:bg-pink-50 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-400 cursor-pointer"
+              aria-label={
+                mobileMenuOpen
+                  ? 'Close Navigation Menu'
+                  : 'Open Navigation Menu'
+              }
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* 5. Mobile Drawer Overlay & Sheet */}
+      {/* 5. Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-[60px] z-50 lg:hidden flex flex-col bg-white/95 backdrop-blur-xl border-t border-pink-100 shadow-2xl animate-in slide-in-from-top-2 duration-200 overflow-y-auto">
-          <div className="p-4 sm:p-6 space-y-5 max-w-md mx-auto w-full">
-            {/* Section 1: Main Pages */}
+        <div className="fixed inset-0 top-[64px] z-50 lg:hidden flex flex-col bg-white/95 backdrop-blur-2xl border-t border-pink-100 shadow-2xl overflow-y-auto animate-fadeIn">
+          <div className="p-5 sm:p-6 space-y-6 max-w-md mx-auto w-full">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3 px-1">
                 Explore Universe
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeSection === item.id;
@@ -229,9 +276,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
                       key={item.id}
                       href={item.href}
                       onClick={(e) => handleLinkClick(e, item.href)}
-                      className={`px-3 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all min-h-[44px] ${
+                      className={`px-3.5 py-3 rounded-2xl text-xs font-bold flex items-center gap-2.5 transition-all min-h-[44px] ${
                         isActive
-                          ? 'bg-pink-50 text-pink-700 border border-pink-200 shadow-2xs'
+                          ? 'bg-pink-50 text-pink-700 border border-pink-200 shadow-sm'
                           : item.highlight
                           ? 'bg-gradient-to-r from-pink-50 to-amber-50 text-pink-700 border border-pink-100'
                           : 'bg-slate-50 text-slate-700 hover:bg-pink-50 hover:text-pink-600 border border-slate-100'
@@ -245,8 +292,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
               </div>
             </div>
 
-            {/* Section 2: Dedicated Action Switchers (Blog & Old Website) */}
-            <div className="pt-2 border-t border-slate-100 space-y-2">
+            <div className="pt-3 border-t border-slate-100 space-y-2.5">
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
                 Connected Hubs
               </p>
@@ -267,7 +313,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
                   setMobileMenuOpen(false);
                   onOpenArchive();
                 }}
-                className="w-full py-3 px-4 rounded-2xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center justify-between min-h-[44px]"
+                className="w-full py-3 px-4 rounded-2xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center justify-between min-h-[44px] cursor-pointer"
               >
                 <span className="flex items-center gap-2">
                   <ExternalLink className="w-4 h-4 text-amber-600" />
@@ -277,8 +323,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive, onOpenBlogModal, 
               </button>
             </div>
 
-            {/* Section 3: Social Channels Quick Row */}
-            <div className="pt-2 border-t border-slate-100">
+            <div className="pt-3 border-t border-slate-100">
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
                 Social Channels
               </p>

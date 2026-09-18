@@ -1,7 +1,10 @@
 import React, { useRef } from 'react';
-import { Youtube, Instagram, Facebook, ArrowUpRight, Heart, Share2, BookOpen, ExternalLink, Sparkles } from 'lucide-react';
+import { Youtube, Instagram, Facebook, ArrowUpRight, Share2, BookOpen, ExternalLink } from 'lucide-react';
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { SOCIAL_CHANNELS_DATA, OLD_WEBSITE_ARCHIVE } from '../data/mockData';
+import { SectionHeader } from './ui/SectionHeader';
+import { Card } from './ui/Card';
+import { Button } from './ui/Button';
 
 interface SocialSectionProps {
   onOpenArchive: () => void;
@@ -10,54 +13,56 @@ interface SocialSectionProps {
 export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) => {
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Connection pulse: header, chips scale, channels y, archive y
-  useGSAP(() => {
-    const mm = whenMotionOk(() => {
-      scrollReveal('[data-soc="header"] > *', { y: 18 }, {
-        trigger: sectionRef.current,
-        stagger: 0.08,
-        duration: 0.35,
-      });
+  // GSAP scroll reveals with reverse support on scroll re-entry
+  useGSAP(
+    () => {
+      const mm = whenMotionOk(() => {
+        scrollReveal('[data-soc="header"] > *', { y: 20 }, {
+          trigger: sectionRef.current,
+          stagger: 0.08,
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-soc="chip"]', { scale: 0.85 }, {
-        trigger: '[data-soc="flow"]',
-        stagger: 0.06,
-        duration: 0.35,
-        ease: 'back.out(1.5)',
-      });
+        scrollReveal('[data-soc="chip"]', { scale: 0.85 }, {
+          trigger: '[data-soc="flow"]',
+          stagger: 0.06,
+          duration: 0.35,
+          ease: 'back.out(1.5)',
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-soc="channel"]', { y: 24 }, {
-        trigger: '[data-soc="channels"]',
-        stagger: 0.08,
-        duration: 0.4,
-      });
+        scrollReveal('[data-soc="channel"]', { y: 24 }, {
+          trigger: '[data-soc="channels"]',
+          stagger: 0.08,
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-soc="archive"]', { y: 20 }, {
-        trigger: '[data-soc="archive"]',
-        duration: 0.4,
+        scrollReveal('[data-soc="archive"]', { y: 20 }, {
+          trigger: '[data-soc="archive"]',
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
       });
-    });
-    return () => mm.revert();
-  }, { scope: sectionRef });
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section ref={sectionRef} id="social" className="py-16 sm:py-24 bg-slate-50/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div data-soc="header" className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2.5 sm:space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
-            <Share2 className="w-3.5 h-3.5" />
-            <span>Community & Content Flow</span>
-          </div>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 font-display">
-            Join Our Global Creative Family
-          </h2>
-          <p className="text-slate-600 text-xs sm:text-base md:text-lg">
-            Follow our daily creation updates, singalong animations on YouTube, doll travel photo albums on Instagram, and parenting discussion circles on Facebook.
-          </p>
+        <div data-soc="header">
+          <SectionHeader
+            badge="Community & Content Flow"
+            badgeIcon={<Share2 className="w-3.5 h-3.5" />}
+            title="Join Our Global Creative Family"
+            subtitle="Follow our daily creation updates, singalong animations on YouTube, doll travel photo albums on Instagram, and parenting discussion circles on Facebook."
+          />
         </div>
 
-        {/* Content Flow Ecosystem Diagram / Hub Map */}
+        {/* Content Flow Ecosystem Diagram */}
         <div data-soc="flow" className="mb-12 sm:mb-14 p-5 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xs">
           <p className="text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 sm:mb-6">
             Ecosystem Content Flow: Move Seamlessly Between Channels
@@ -108,7 +113,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
             <button
               data-soc="chip"
               onClick={onOpenArchive}
-              className="px-3.5 sm:px-4 py-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors flex items-center gap-1.5"
+              className="px-3.5 sm:px-4 py-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <ExternalLink className="w-4 h-4" /> Old Website (2014)
             </button>
@@ -118,7 +123,11 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
         {/* 3 Main Social Cards */}
         <div data-soc="channels" className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12">
           {/* YouTube Card */}
-          <div data-soc="channel" className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
+          <Card
+            data-soc="channel"
+            elevation="interactive"
+            className="p-5 sm:p-8 bg-white border-slate-200/90 flex flex-col justify-between space-y-5 sm:space-y-6"
+          >
             <div>
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
@@ -129,7 +138,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
                 </span>
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                 {SOCIAL_CHANNELS_DATA[0].name}
               </h3>
               <p className="text-xs font-bold text-slate-400 mb-2">
@@ -139,7 +148,6 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
                 {SOCIAL_CHANNELS_DATA[0].description}
               </p>
 
-              {/* Recent Snippet */}
               <div className="p-3 sm:p-3.5 mt-4 rounded-2xl bg-slate-50 border border-slate-100">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Latest Episode Video
@@ -153,19 +161,24 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
               </div>
             </div>
 
-            <a
+            <Button
+              variant="primary"
+              size="md"
               href={SOCIAL_CHANNELS_DATA[0].link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+              external
+              icon={<ArrowUpRight className="w-4 h-4" />}
+              className="w-full bg-red-600 hover:bg-red-700"
             >
-              <span>{SOCIAL_CHANNELS_DATA[0].actionLabel}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
+              {SOCIAL_CHANNELS_DATA[0].actionLabel}
+            </Button>
+          </Card>
 
           {/* Instagram Card */}
-          <div data-soc="channel" className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
+          <Card
+            data-soc="channel"
+            elevation="interactive"
+            className="p-5 sm:p-8 bg-white border-slate-200/90 flex flex-col justify-between space-y-5 sm:space-y-6"
+          >
             <div>
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center">
@@ -176,7 +189,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
                 </span>
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                 {SOCIAL_CHANNELS_DATA[1].name}
               </h3>
               <p className="text-xs font-bold text-slate-400 mb-2">
@@ -186,7 +199,6 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
                 {SOCIAL_CHANNELS_DATA[1].description}
               </p>
 
-              {/* Recent Snippet */}
               <div className="p-3 sm:p-3.5 mt-4 rounded-2xl bg-slate-50 border border-slate-100">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Daily Studio Story
@@ -200,19 +212,24 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
               </div>
             </div>
 
-            <a
+            <Button
+              variant="magic"
+              size="md"
               href={SOCIAL_CHANNELS_DATA[1].link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 rounded-2xl bg-gradient-to-r from-yellow-500 via-pink-500 to-purple-600 hover:opacity-95 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+              external
+              icon={<ArrowUpRight className="w-4 h-4" />}
+              className="w-full bg-gradient-to-r from-yellow-500 via-pink-500 to-purple-600 hover:opacity-95"
             >
-              <span>{SOCIAL_CHANNELS_DATA[1].actionLabel}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
+              {SOCIAL_CHANNELS_DATA[1].actionLabel}
+            </Button>
+          </Card>
 
-          {/* Facebook Parents Community Card */}
-          <div data-soc="channel" className="rounded-3xl p-5 sm:p-8 bg-white border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6">
+          {/* Facebook Card */}
+          <Card
+            data-soc="channel"
+            elevation="interactive"
+            className="p-5 sm:p-8 bg-white border-slate-200/90 flex flex-col justify-between space-y-5 sm:space-y-6"
+          >
             <div>
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
@@ -223,7 +240,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
                 </span>
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                 {SOCIAL_CHANNELS_DATA[2].name}
               </h3>
               <p className="text-xs font-bold text-slate-400 mb-2">
@@ -233,7 +250,6 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
                 {SOCIAL_CHANNELS_DATA[2].description}
               </p>
 
-              {/* Recent Snippet */}
               <div className="p-3 sm:p-3.5 mt-4 rounded-2xl bg-slate-50 border border-slate-100">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Community Discussion & PDF
@@ -247,27 +263,31 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
               </div>
             </div>
 
-            <a
+            <Button
+              variant="primary"
+              size="md"
               href={SOCIAL_CHANNELS_DATA[2].link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+              external
+              icon={<ArrowUpRight className="w-4 h-4" />}
+              className="w-full bg-blue-600 hover:bg-blue-700"
             >
-              <span>{SOCIAL_CHANNELS_DATA[2].actionLabel}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
+              {SOCIAL_CHANNELS_DATA[2].actionLabel}
+            </Button>
+          </Card>
         </div>
 
         {/* Vintage Old Website Archive Callout Banner */}
-        <div data-soc="archive" className="rounded-3xl p-5 sm:p-8 bg-amber-50/80 border border-amber-200/90 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
+        <div
+          data-soc="archive"
+          className="rounded-3xl p-5 sm:p-8 bg-amber-50/80 border border-amber-200/90 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6"
+        >
           <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left w-full md:w-auto">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 text-2xl">
               ⏳
             </div>
             <div>
               <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <h4 className="font-extrabold text-base sm:text-lg text-slate-900 font-display">
+                <h4 className="font-bold text-base sm:text-lg text-slate-900">
                   {OLD_WEBSITE_ARCHIVE.title}
                 </h4>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 text-amber-900">
@@ -280,14 +300,17 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
             </div>
           </div>
 
-          <button
+          <Button
             id="social-open-archive-btn"
+            variant="secondary"
+            size="md"
             onClick={onOpenArchive}
-            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all shrink-0 flex items-center justify-center gap-2 min-h-[44px]"
+            icon={<ExternalLink className="w-4 h-4" />}
+            iconPosition="left"
+            className="w-full sm:w-auto shrink-0 bg-amber-500 hover:bg-amber-600 text-white"
           >
-            <ExternalLink className="w-4 h-4" />
-            <span>{OLD_WEBSITE_ARCHIVE.cta}</span>
-          </button>
+            {OLD_WEBSITE_ARCHIVE.cta}
+          </Button>
         </div>
       </div>
     </section>

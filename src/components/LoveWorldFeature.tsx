@@ -3,6 +3,9 @@ import { Sparkles, HeartHandshake, Play, ShieldCheck, Palette, Star, ArrowRight,
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { LOVE_WORLD_DATA, PROJECTS_DATA } from '../data/mockData';
 import { Character } from '../types';
+import { SectionHeader } from './ui/SectionHeader';
+import { Card } from './ui/Card';
+import { Button } from './ui/Button';
 
 interface LoveWorldFeatureProps {
   onOpenVideo: () => void;
@@ -18,7 +21,9 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
   const [preRegEmail, setPreRegEmail] = useState('');
   const sectionRef = useRef<HTMLElement>(null);
 
-  const trailerPoster = PROJECTS_DATA[0]?.coverImage || 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1920&q=85';
+  const trailerPoster =
+    PROJECTS_DATA[0]?.coverImage ||
+    'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1920&q=85';
 
   const handlePreReg = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,65 +31,69 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
     setPreRegistered(true);
   };
 
-  // Island-rise: trailer blooms open, pillars float up, map + CTA lift
-  useGSAP(() => {
-    const mm = whenMotionOk(() => {
-      scrollReveal('[data-lw="header"] > *', { y: 18 }, {
-        trigger: sectionRef.current,
-        stagger: 0.08,
-        duration: 0.35,
-      });
+  // GSAP scroll reveals with reverse on scroll re-entry
+  useGSAP(
+    () => {
+      const mm = whenMotionOk(() => {
+        scrollReveal('[data-lw="header"] > *', { y: 20 }, {
+          trigger: sectionRef.current,
+          stagger: 0.08,
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-lw="trailer"]', { scale: 0.94, y: 24 }, {
-        trigger: '[data-lw="trailer"]',
-        duration: 0.45,
-      });
+        scrollReveal('[data-lw="trailer"]', { scale: 0.94, y: 24 }, {
+          trigger: '[data-lw="trailer"]',
+          duration: 0.45,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-lw="pillar"]', { y: 28 }, {
-        trigger: '[data-lw="pillars"]',
-        stagger: 0.08,
-        duration: 0.4,
-        ease: 'back.out(1.3)',
-      });
+        scrollReveal('[data-lw="pillar"]', { y: 28 }, {
+          trigger: '[data-lw="pillars"]',
+          stagger: 0.08,
+          duration: 0.4,
+          ease: 'back.out(1.3)',
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-lw="map"]', { y: 22 }, {
-        trigger: '[data-lw="map"]',
-        duration: 0.4,
-      });
+        scrollReveal('[data-lw="map"]', { y: 22 }, {
+          trigger: '[data-lw="map"]',
+          duration: 0.4,
+          toggleActions: 'play reverse play reverse',
+        });
 
-      scrollReveal('[data-lw="cta"]', { scale: 0.96 }, {
-        trigger: '[data-lw="cta"]',
-        duration: 0.4,
-        ease: 'back.out(1.5)',
+        scrollReveal('[data-lw="cta"]', { scale: 0.96 }, {
+          trigger: '[data-lw="cta"]',
+          duration: 0.4,
+          ease: 'back.out(1.5)',
+          toggleActions: 'play reverse play reverse',
+        });
       });
-    });
-    return () => mm.revert();
-  }, { scope: sectionRef });
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section ref={sectionRef} id="love-world" className="py-20 sm:py-24 bg-gradient-to-b from-white via-pink-50/40 to-slate-50 relative overflow-hidden">
-      {/* Background Soft Blobs */}
+    <section
+      ref={sectionRef}
+      id="love-world"
+      className="py-20 sm:py-24 bg-gradient-to-b from-white via-pink-50/40 to-slate-50 relative overflow-hidden"
+    >
       <div className="absolute top-1/3 -left-32 w-80 sm:w-96 h-80 sm:h-96 bg-pink-200/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 -right-32 w-80 sm:w-96 h-80 sm:h-96 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div data-lw="header" className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-pink-600" />
-            <span>{LOVE_WORLD_DATA.tagline}</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 font-display">
-            The Next Creative Frontier
-          </h2>
-
-          <p className="text-slate-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
-            {LOVE_WORLD_DATA.overview}
-          </p>
+        <div data-lw="header">
+          <SectionHeader
+            badge={LOVE_WORLD_DATA.tagline}
+            badgeIcon={<Sparkles className="w-3.5 h-3.5 text-pink-600" />}
+            title="The Next Creative Frontier"
+            subtitle={LOVE_WORLD_DATA.overview}
+          />
         </div>
 
-        {/* Flagship Hero Video / Gameplay Showcase Frame - Consuming 100% Full Width */}
+        {/* Flagship Hero Video */}
         <div data-lw="trailer" className="mb-14 w-full">
           <div className="w-full relative rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white bg-slate-950 group aspect-16/10 sm:aspect-16/9 min-h-[300px] sm:min-h-[440px] lg:min-h-[520px]">
             <img
@@ -94,7 +103,6 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent pointer-events-none" />
 
-            {/* Central Play Trailer Button */}
             <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-10">
               <button
                 id="play-love-world-trailer-btn"
@@ -102,7 +110,7 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
                 className="w-16 h-16 sm:w-22 sm:h-22 rounded-full bg-pink-600/95 hover:bg-pink-500 text-white shadow-2xl flex items-center justify-center transition-all transform hover:scale-110 active:scale-95 group/btn cursor-pointer"
                 aria-label="Play Trailer"
               >
-                <Play className="w-6 h-6 sm:w-9 sm:h-9 fill-white translate-x-0.5 group-hover/btn:text-white" />
+                <Play className="w-6 h-6 sm:w-9 sm:h-9 fill-white translate-x-0.5" />
               </button>
               <div className="mt-3 sm:mt-4">
                 <span className="px-3 sm:px-4 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-[11px] sm:text-xs md:text-sm font-bold border border-white/20">
@@ -111,24 +119,28 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
               </div>
             </div>
 
-            {/* Desktop Floating Stats Pill (Stretches across the full container width with balanced margins) */}
             <div className="hidden md:flex absolute bottom-6 left-6 right-6 items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-slate-700/50 text-white z-10">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <span className="text-xs sm:text-sm font-bold">{LOVE_WORLD_DATA.releaseDate}</span>
+                <span className="text-xs sm:text-sm font-bold">
+                  {LOVE_WORLD_DATA.releaseDate}
+                </span>
               </div>
               <div className="grid grid-cols-4 gap-4 text-center">
                 {LOVE_WORLD_DATA.stats.map((s, idx) => (
                   <div key={idx} className="px-2">
-                    <p className="text-sm sm:text-base font-extrabold text-pink-400">{s.value}</p>
-                    <p className="text-[10px] sm:text-xs text-slate-300 font-medium">{s.label}</p>
+                    <p className="text-sm sm:text-base font-extrabold text-pink-400">
+                      {s.value}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-slate-300 font-medium">
+                      {s.label}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Mobile-Optimized Stats Row (Visible on mobile/tablet below the video) */}
           <div className="md:hidden mt-3 p-4 rounded-2xl bg-slate-900 text-white border border-slate-800 space-y-3">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <span className="text-xs font-bold text-pink-400">Launch Timeline</span>
@@ -148,15 +160,21 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
           </div>
         </div>
 
-        {/* 4 Core Pillars of LOVE WORLD */}
-        <div data-lw="pillars" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-14 sm:mb-16">
+        {/* 4 Core Pillars */}
+        <div
+          data-lw="pillars"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-14 sm:mb-16"
+        >
           {LOVE_WORLD_DATA.keyPillars.map((pillar, idx) => (
-            <div
+            <Card
               key={idx}
               data-lw="pillar"
-              className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow"
+              elevation="interactive"
+              className="p-5 sm:p-6"
             >
-              <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl ${pillar.color} flex items-center justify-center mb-3 sm:mb-4`}>
+              <div
+                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl ${pillar.color} flex items-center justify-center mb-3 sm:mb-4`}
+              >
                 {idx === 0 && <HeartHandshake className="w-5 h-5 sm:w-6 sm:h-6" />}
                 {idx === 1 && <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />}
                 {idx === 2 && <Palette className="w-5 h-5 sm:w-6 sm:h-6" />}
@@ -168,12 +186,15 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {pillar.desc}
               </p>
-            </div>
+            </Card>
           ))}
         </div>
 
         {/* Interactive Floating Islands Map Tour */}
-        <div data-lw="map" className="p-5 sm:p-8 md:p-10 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl mb-14 sm:mb-16">
+        <div
+          data-lw="map"
+          className="p-5 sm:p-8 md:p-10 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl mb-14 sm:mb-16"
+        >
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6 mb-6 pb-6 border-b border-slate-800">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-pink-400">
@@ -183,13 +204,12 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
                 Explore the Floating Islands of Kindness
               </h3>
             </div>
-            {/* Scrollable Island Pills on Mobile */}
             <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 no-scrollbar">
               {LOVE_WORLD_DATA.islands.map((island, index) => (
                 <button
                   key={island.name}
                   onClick={() => setActiveIsland(index)}
-                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 min-h-[38px] ${
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 min-h-[38px] cursor-pointer ${
                     activeIsland === index
                       ? 'bg-pink-600 text-white shadow-md'
                       : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -251,7 +271,10 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
         </div>
 
         {/* Pre-register & VIP Kids Pass Banner */}
-        <div data-lw="cta" className="rounded-3xl p-6 sm:p-8 md:p-10 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-xl text-center max-w-4xl mx-auto">
+        <div
+          data-lw="cta"
+          className="rounded-3xl p-6 sm:p-8 md:p-10 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-xl text-center max-w-4xl mx-auto"
+        >
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider mb-3">
             <Star className="w-3.5 h-3.5 fill-white text-white" />
             <span>Join the 10-Year Anniversary Beta List</span>
@@ -265,12 +288,15 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
           </p>
 
           {preRegistered ? (
-            <div className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 rounded-2xl bg-white text-pink-700 font-bold text-xs sm:text-sm shadow-md animate-in fade-in">
+            <div className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 rounded-2xl bg-white text-pink-700 font-bold text-xs sm:text-sm shadow-md">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
               <span>You are on the VIP Beta List! We'll email you the instant the gates open.</span>
             </div>
           ) : (
-            <form onSubmit={handlePreReg} className="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-md mx-auto w-full">
+            <form
+              onSubmit={handlePreReg}
+              className="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-md mx-auto w-full"
+            >
               <input
                 type="email"
                 required
@@ -279,13 +305,15 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
                 placeholder="Enter parent or guardian email..."
                 className="w-full px-4 sm:px-5 py-3 rounded-2xl text-slate-900 bg-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none shadow-sm min-h-[44px]"
               />
-              <button
+              <Button
                 type="submit"
-                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-md shrink-0 transition-transform active:scale-95 flex items-center justify-center gap-2 min-h-[44px]"
+                variant="secondary"
+                size="md"
+                icon={<ArrowRight className="w-4 h-4" />}
+                className="w-full sm:w-auto shrink-0 bg-slate-900 text-white hover:bg-slate-800"
               >
-                <span>Get VIP Pass</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+                Get VIP Pass
+              </Button>
             </form>
           )}
         </div>

@@ -4,11 +4,28 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-/** Snappy scroll reveals — UX 150–400ms range */
+/** Easing curves tailored for Spread Love playful & premium feel */
+export const EASE = {
+  playful: 'back.out(1.4)',
+  spring: 'elastic.out(1, 0.5)',
+  bounce: 'bounce.out',
+  smooth: 'power3.out',
+  gentle: 'power2.out',
+  inOut: 'power2.inOut',
+} as const;
+
+/** Standard stagger durations for list items, grids, and cards */
+export const STAGGER = {
+  fast: 0.05,
+  normal: 0.08,
+  slow: 0.15,
+} as const;
+
+/** Snappy scroll reveals with reverse support on scroll re-entry */
 export const ST = {
-  start: 'top 90%',
-  toggleActions: 'play none none none' as const,
-  once: true,
+  start: 'top 85%',
+  toggleActions: 'play reverse play reverse' as const,
+  once: false,
 } as const;
 
 export type RevealOpts = {
@@ -17,12 +34,13 @@ export type RevealOpts = {
   duration?: number;
   delay?: number;
   ease?: string;
+  toggleActions?: string;
+  once?: boolean;
 };
 
 /**
  * Safe scroll reveal.
- * Uses fromTo + immediateRender:false so content never stays stuck at opacity 0
- * when ScrollTrigger / Lenis race on load.
+ * Reverses/re-animates when user scrolls out and back into the section.
  */
 export function scrollReveal(
   targets: gsap.TweenTarget,
@@ -31,10 +49,12 @@ export function scrollReveal(
 ) {
   const {
     trigger,
-    stagger,
-    duration = 0.4,
+    stagger = STAGGER.normal,
+    duration = 0.5,
     delay = 0,
-    ease = 'power2.out',
+    ease = EASE.gentle,
+    toggleActions = ST.toggleActions,
+    once = ST.once,
   } = opts;
 
   const toVars: gsap.TweenVars = {
@@ -51,8 +71,8 @@ export function scrollReveal(
     scrollTrigger: {
       trigger: trigger as gsap.DOMTarget | undefined,
       start: ST.start,
-      toggleActions: ST.toggleActions,
-      once: true,
+      toggleActions,
+      once,
     },
   };
 
@@ -85,12 +105,38 @@ export function enterFrom(
       y: 0,
       scale: 1,
       rotation: 0,
-      duration: 0.4,
-      ease: 'power2.out',
+      duration: 0.5,
+      ease: EASE.smooth,
       overwrite: 'auto',
       ...toVars,
     }
   );
+}
+
+/**
+ * Creates organic floating animation for floating elements/characters.
+ */
+export function createFloatAnimation(
+  target: gsap.TweenTarget,
+  options: { distance?: number; duration?: number; delay?: number } = {}
+) {
+  const { distance = 12, duration = 3.5, delay = 0 } = options;
+  return gsap.to(target, {
+    y: `-=${distance}`,
+    rotation: '+=2',
+    duration,
+    delay,
+    ease: 'sine.inOut',
+    repeat: -1,
+    yoyo: true,
+  });
+}
+
+/**
+ * Checks if user prefers reduced motion
+ */
+export function isReducedMotion(): boolean {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 /**
@@ -110,3 +156,4 @@ export function whenMotionOk(setup: () => void): gsap.MatchMedia {
 }
 
 export { gsap, ScrollTrigger, useGSAP };
+
