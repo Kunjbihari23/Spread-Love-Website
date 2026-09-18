@@ -64,6 +64,8 @@
      ──────────────────────────────────────────────────────── */
   --font-display:     'Fredoka', 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body:        'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-story:       'Baloo 2', 'Fredoka', system-ui, sans-serif;
+  --font-hand:        'Caveat', 'Baloo 2', cursive;
 
   /* Fluid type scale using clamp(min, preferred, max) */
   --text-display:     clamp(2.25rem, 5vw + 0.5rem, 4rem);        /* 36px → 64px */

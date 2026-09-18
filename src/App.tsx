@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { TimelineSection } from './components/TimelineSection';
+import { OdysseySection } from './components/odyssey/OdysseySection';
 import { LoveWorldFeature } from './components/LoveWorldFeature';
 import { ProjectsSection } from './components/ProjectsSection';
 import { CharactersSection } from './components/CharactersSection';
@@ -85,8 +85,8 @@ export default function App() {
           onSelectCharacter={(char) => setActiveCharacter(char)}
         />
 
-        {/* 2. 10-YEAR JOURNEY INTERACTIVE TIMELINE */}
-        <TimelineSection />
+        {/* 2. 10-YEAR JOURNEY — STORYBOOK MOTION PICTURE */}
+        <OdysseySection />
 
         {/* 3. LOVE WORLD FLAGSHIP FEATURE */}
         <LoveWorldFeature

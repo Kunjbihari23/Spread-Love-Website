@@ -1,8 +1,41 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { SplitText } from 'gsap/SplitText';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
+import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
+import { Draggable } from 'gsap/Draggable';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
+import { Flip } from 'gsap/Flip';
+import { Observer } from 'gsap/Observer';
+import { CustomEase } from 'gsap/CustomEase';
+import { CustomWiggle } from 'gsap/CustomWiggle';
 import { useGSAP } from '@gsap/react';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(
+  ScrollTrigger,
+  ScrollToPlugin,
+  SplitText,
+  DrawSVGPlugin,
+  MotionPathPlugin,
+  MorphSVGPlugin,
+  Physics2DPlugin,
+  Draggable,
+  InertiaPlugin,
+  Flip,
+  Observer,
+  CustomEase,
+  CustomWiggle,
+  useGSAP
+);
+
+/* Storybook motion signature: slow inhale, confident settle, no overshoot wobble */
+CustomEase.create('storybook', '0.16, 0.84, 0.24, 1');
+CustomEase.create('pageTurn', '0.42, 0, 0.18, 1');
+CustomEase.create('popIn', '0.34, 1.8, 0.36, 1');
+CustomWiggle.create('stickerWiggle', { wiggles: 6, type: 'easeOut' });
 
 /** Easing curves tailored for Spread Love playful & premium feel */
 export const EASE = {
@@ -12,6 +45,10 @@ export const EASE = {
   smooth: 'power3.out',
   gentle: 'power2.out',
   inOut: 'power2.inOut',
+  story: 'storybook',
+  page: 'pageTurn',
+  pop: 'popIn',
+  wiggle: 'stickerWiggle',
 } as const;
 
 /** Standard stagger durations for list items, grids, and cards */
@@ -155,5 +192,32 @@ export function whenMotionOk(setup: () => void): gsap.MatchMedia {
   return mm;
 }
 
-export { gsap, ScrollTrigger, useGSAP };
+/** Scrolls the window to an absolute Y, cooperating with Lenis when present. */
+export function scrollToY(y: number, duration = 1.1) {
+  const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number, o?: object) => void } })
+    .__lenis;
+  if (lenis) {
+    lenis.scrollTo(y, { duration, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
+  } else {
+    gsap.to(window, { scrollTo: { y, autoKill: false }, duration, ease: EASE.story });
+  }
+}
+
+export {
+  gsap,
+  ScrollTrigger,
+  ScrollToPlugin,
+  SplitText,
+  DrawSVGPlugin,
+  MotionPathPlugin,
+  MorphSVGPlugin,
+  Physics2DPlugin,
+  Draggable,
+  InertiaPlugin,
+  Flip,
+  Observer,
+  CustomEase,
+  CustomWiggle,
+  useGSAP,
+};
 

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
+@import "./styles/odyssey.css";
 
 @layer base {
   /* ── Skip-to-content for accessibility ── */

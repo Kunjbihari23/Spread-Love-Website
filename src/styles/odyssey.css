@@ -1,0 +1,516 @@
+/* ========================================================================
+   THE 10-YEAR CREATIVE ODYSSEY — storybook motion-picture stage
+   A pinned, scroll-scrubbed pop-up book inside a little velvet theater.
+   ======================================================================== */
+
+.od-root {
+  --od-night: #1b0e2b;
+  --od-night-2: #2d1444;
+  --od-dusk: #46205f;
+  --od-gold: #ffca4b;
+  --od-gold-deep: #e29a00;
+  --od-paper: #fffaf1;
+  --od-paper-2: #f7ecd9;
+  --od-ink: #2a1c3f;
+  --od-ink-soft: #5b4a75;
+  --od-pink: #ff4d8d;
+
+  position: relative;
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--od-dusk) 0%, transparent 60%),
+    radial-gradient(90% 60% at 50% 100%, #3b1a53 0%, transparent 65%),
+    linear-gradient(180deg, var(--od-night) 0%, var(--od-night-2) 55%, var(--od-night) 100%);
+  color: var(--od-paper);
+  isolation: isolate;
+}
+
+/* ── Pinned stage ─────────────────────────────────────────────── */
+.od-stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* ── Ambient layers ───────────────────────────────────────────── */
+.od-starfield,
+.od-vignette,
+.od-grain,
+.od-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.od-starfield {
+  background-repeat: repeat;
+  background-image:
+    radial-gradient(1.6px 1.6px at 20% 30%, rgba(255, 255, 255, 0.75) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 70% 12%, rgba(255, 224, 160, 0.8) 50%, transparent 52%),
+    radial-gradient(1.8px 1.8px at 45% 70%, rgba(255, 255, 255, 0.5) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 88% 58%, rgba(255, 210, 230, 0.7) 50%, transparent 52%);
+  background-size: 340px 340px, 480px 480px, 300px 300px, 560px 560px;
+  opacity: 0.55;
+}
+
+.od-spotlight {
+  background: radial-gradient(
+    38% 48% at var(--od-spot-x, 50%) var(--od-spot-y, 42%),
+    rgba(255, 226, 168, 0.22) 0%,
+    rgba(255, 200, 120, 0.08) 45%,
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+}
+
+.od-vignette {
+  background: radial-gradient(75% 65% at 50% 45%, transparent 55%, rgba(12, 5, 22, 0.72) 100%);
+}
+
+.od-grain {
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ── Velvet curtains ──────────────────────────────────────────── */
+.od-curtain {
+  position: absolute;
+  top: -2%;
+  bottom: -2%;
+  width: 56%;
+  pointer-events: none;
+  z-index: 30;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.32) 0 6px, rgba(255, 255, 255, 0.06) 22px, rgba(0, 0, 0, 0.3) 46px),
+    linear-gradient(90deg, #6d0f2e 0%, #a71742 42%, #7b1131 72%, #530a20 100%);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);
+}
+.od-curtain--l {
+  left: 0;
+  transform-origin: left center;
+  border-right: 3px solid rgba(255, 202, 75, 0.55);
+}
+.od-curtain--r {
+  right: 0;
+  transform-origin: right center;
+  border-left: 3px solid rgba(255, 202, 75, 0.55);
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0 6px, rgba(255, 255, 255, 0.06) 22px, rgba(0, 0, 0, 0.32) 46px),
+    linear-gradient(270deg, #6d0f2e 0%, #a71742 42%, #7b1131 72%, #530a20 100%);
+}
+
+/* ── The book ─────────────────────────────────────────────────── */
+.od-book-wrap {
+  position: relative;
+  width: min(1180px, 94vw);
+  perspective: 2400px;
+  perspective-origin: 50% 45%;
+  z-index: 10;
+}
+
+.od-book {
+  position: relative;
+  aspect-ratio: 16 / 9.6;
+  max-height: 76vh;
+  transform-style: preserve-3d;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #2b1240 0%, #1d0c2e 100%);
+  box-shadow:
+    0 60px 120px -30px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 202, 75, 0.18),
+    0 0 90px -20px rgba(255, 170, 90, 0.25);
+}
+
+@media (max-width: 860px) {
+  .od-book {
+    aspect-ratio: 3 / 4.1;
+    max-height: 72vh;
+  }
+}
+
+/* Two-page spread grid: illustration left, story right */
+.od-spread {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .od-spread {
+    grid-template-columns: 1fr;
+    grid-template-rows: 40% 60%;
+  }
+}
+
+/* Paper surface used by every page face */
+.od-paper-face {
+  position: relative;
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(255, 255, 255, 0.9) 0%, transparent 55%),
+    linear-gradient(160deg, var(--od-paper) 0%, var(--od-paper-2) 100%);
+  color: var(--od-ink);
+}
+.od-paper-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.28'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* Center gutter shadow — sells the fold */
+.od-gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 78px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 12;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(70, 40, 20, 0.05) 28%,
+    rgba(60, 32, 14, 0.28) 48%,
+    rgba(255, 255, 255, 0.35) 50.5%,
+    rgba(60, 32, 14, 0.24) 53%,
+    rgba(70, 40, 20, 0.04) 74%,
+    transparent 100%
+  );
+}
+@media (max-width: 860px) {
+  .od-gutter {
+    display: none;
+  }
+}
+
+/* Stacked page edges on the right — the "there's more story" cue */
+.od-edges {
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  right: -9px;
+  width: 14px;
+  border-radius: 0 10px 10px 0;
+  background: repeating-linear-gradient(
+    180deg,
+    #fffaf1 0 3px,
+    #e4d5bd 3px 5px
+  );
+  box-shadow: 4px 0 14px rgba(0, 0, 0, 0.35);
+  z-index: 5;
+}
+
+/* ── Turning leaves ───────────────────────────────────────────── */
+.od-leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 50%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+  border-radius: 0 20px 20px 0;
+  overflow: hidden;
+}
+@media (max-width: 860px) {
+  .od-leaf {
+    left: 0;
+    top: 40%;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+/* Light that rakes across a page as it lifts */
+.od-leaf-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, rgba(40, 18, 60, 0.55) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 100%);
+}
+
+/* ── Illustration window ──────────────────────────────────────── */
+.od-window {
+  position: absolute;
+  inset: 7% 8% 7% 7%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #170a26;
+  box-shadow:
+    0 22px 45px -18px rgba(30, 10, 45, 0.7),
+    0 0 0 8px #fffaf1,
+    0 0 0 9px rgba(120, 80, 40, 0.18);
+}
+.od-window img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* Washi tape corners */
+.od-tape {
+  position: absolute;
+  width: 92px;
+  height: 26px;
+  background: linear-gradient(180deg, rgba(255, 214, 122, 0.92), rgba(255, 176, 92, 0.85));
+  box-shadow: 0 2px 8px rgba(40, 20, 0, 0.25);
+  opacity: 0.92;
+  z-index: 4;
+}
+.od-tape--tl { top: 3.5%; left: 1%; transform: rotate(-24deg); }
+.od-tape--br { bottom: 3.5%; right: 1%; transform: rotate(-24deg); }
+
+/* ── Typography ───────────────────────────────────────────────── */
+.od-hand {
+  font-family: var(--font-hand);
+  font-weight: 700;
+}
+.od-story {
+  font-family: var(--font-story);
+}
+
+.od-year {
+  font-family: var(--font-story);
+  font-weight: 800;
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  font-size: clamp(3.2rem, 7vw, 6.4rem);
+  background: linear-gradient(180deg, #ff77aa 0%, var(--od-pink) 45%, #c2185b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 0 rgba(255, 255, 255, 0.85));
+}
+
+.od-foil {
+  background: linear-gradient(
+    100deg,
+    #9a6a12 0%,
+    #ffe9a8 22%,
+    #fff8dd 34%,
+    #e0a827 48%,
+    #ffe9a8 66%,
+    #a9761a 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Highlight stickers ───────────────────────────────────────── */
+.od-sticker {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 13px;
+  background: linear-gradient(165deg, #ffffff 0%, #fff4e3 100%);
+  border: 1.5px solid rgba(255, 178, 96, 0.5);
+  box-shadow: 0 6px 14px -6px rgba(90, 48, 10, 0.35);
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #4a3763;
+  line-height: 1.25;
+  transform-origin: 20% 0%;
+}
+
+/* ── Ribbon / achievement ─────────────────────────────────────── */
+.od-ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 1.05rem;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(95deg, #e11d48 0%, #ff4d8d 55%, #ff8fb3 100%);
+  box-shadow: 0 8px 18px -8px rgba(225, 29, 72, 0.8);
+  clip-path: polygon(0 0, 100% 0, 96% 50%, 100% 100%, 0 100%, 4% 50%);
+}
+
+/* ── Journey rail (chapter selector) ─────────────────────────── */
+.od-rail {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.85rem, 2.4vh, 1.7rem);
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(23, 10, 38, 0.66);
+  border: 1px solid rgba(255, 202, 75, 0.28);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9);
+}
+
+.od-chip {
+  position: relative;
+  z-index: 2;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  font-family: var(--font-story);
+  font-weight: 700;
+  font-size: 0.74rem;
+  color: rgba(255, 246, 228, 0.66);
+  cursor: pointer;
+  transition: color 0.25s var(--ease-out), transform 0.25s var(--ease-spring);
+  min-height: 34px;
+}
+.od-chip:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+.od-chip[aria-current='true'] {
+  color: #3a0f22;
+}
+
+.od-chip-pill {
+  position: absolute;
+  z-index: 1;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--od-gold) 0%, #ffe6a0 50%, var(--od-gold-deep) 100%);
+  box-shadow: 0 6px 16px -6px rgba(255, 190, 70, 0.9);
+  pointer-events: none;
+}
+
+/* ── Progress quill ───────────────────────────────────────────── */
+.od-quill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 46px;
+  height: 46px;
+  z-index: 26;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+/* ── Drag corner affordance ──────────────────────────────────── */
+.od-corner {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: clamp(64px, 9vw, 108px);
+  height: clamp(64px, 9vw, 108px);
+  z-index: 18;
+  cursor: grab;
+  touch-action: none;
+  background: linear-gradient(315deg, rgba(255, 244, 222, 0.95) 0%, rgba(255, 244, 222, 0.6) 46%, transparent 47%);
+  border-radius: 0 0 20px 0;
+  box-shadow: -8px -8px 18px -10px rgba(70, 40, 10, 0.45) inset;
+}
+.od-corner:active {
+  cursor: grabbing;
+}
+@media (max-width: 860px) {
+  .od-corner {
+    display: none;
+  }
+}
+
+/* ── Cover ────────────────────────────────────────────────────── */
+.od-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(255, 210, 130, 0.22) 0%, transparent 55%),
+    linear-gradient(150deg, #7a1236 0%, #4d0d27 45%, #2a0a1c 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 202, 75, 0.35), 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+}
+
+.od-cover-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23c)'/%3E%3C/svg%3E");
+}
+
+/* ── Finale ───────────────────────────────────────────────────── */
+.od-finale {
+  position: absolute;
+  inset: 0;
+  z-index: 22;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: clamp(1.4rem, 4vw, 3rem);
+  border-radius: 20px;
+  background:
+    radial-gradient(70% 60% at 50% 40%, rgba(255, 207, 120, 0.2) 0%, transparent 70%),
+    linear-gradient(160deg, #240f39 0%, #3d1553 60%, #1c0a2d 100%);
+  pointer-events: none;
+}
+
+.od-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ── Reduced-motion / no-JS static fallback ──────────────────── */
+.od-static-card {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: rgba(255, 250, 241, 0.97);
+  color: var(--od-ink);
+}
+@media (min-width: 860px) {
+  .od-static-card {
+    grid-template-columns: 0.9fr 1.1fr;
+    padding: 1.75rem;
+  }
+}
+
+.od-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 140px;
+  pointer-events: none;
+  z-index: 2;
+}
+.od-scrim--top {
+  top: 0;
+  background: linear-gradient(180deg, rgba(27, 14, 43, 0.95) 0%, transparent 100%);
+}
+.od-scrim--bottom {
+  bottom: 0;
+  background: linear-gradient(0deg, rgba(27, 14, 43, 0.95) 0%, transparent 100%);
+}
