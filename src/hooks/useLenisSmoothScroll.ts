@@ -7,14 +7,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function useLenisSmoothScroll() {
   useEffect(() => {
-    // Skip smooth scroll when user prefers reduced motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
 
-    // Initialize Lenis smooth scrolling with playful fluid easing
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -24,7 +22,7 @@ export function useLenisSmoothScroll() {
       infinite: false,
     });
 
-    // Synchronize Lenis scroll position with GSAP ScrollTrigger
+    // Official Lenis ↔ GSAP sync (native scroll — no scrollerProxy)
     lenis.on('scroll', ScrollTrigger.update);
 
     const updateLenis = (time: number) => {
@@ -34,11 +32,10 @@ export function useLenisSmoothScroll() {
     gsap.ticker.add(updateLenis);
     gsap.ticker.lagSmoothing(0);
 
-    // Smoothly route anchor links through Lenis
     const handleAnchorClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest('a');
       if (!target) return;
-      
+
       const href = target.getAttribute('href');
       if (href && href.startsWith('#') && href.length > 1) {
         const elem = document.querySelector(href);
@@ -46,7 +43,7 @@ export function useLenisSmoothScroll() {
           e.preventDefault();
           lenis.scrollTo(elem as HTMLElement, {
             offset: -75,
-            duration: 1.4,
+            duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           });
         }
@@ -55,14 +52,20 @@ export function useLenisSmoothScroll() {
 
     document.addEventListener('click', handleAnchorClick);
 
-    // Expose lenis instance globally if needed
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener('load', refresh);
+    const refreshTimer = window.setTimeout(refresh, 350);
+
     (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 
     return () => {
+      window.clearTimeout(refreshTimer);
+      window.removeEventListener('load', refresh);
       document.removeEventListener('click', handleAnchorClick);
       gsap.ticker.remove(updateLenis);
       lenis.destroy();
       delete (window as unknown as { __lenis?: Lenis }).__lenis;
+      ScrollTrigger.refresh();
     };
   }, []);
 }
@@ -72,7 +75,7 @@ export function scrollToSection(sectionId: string, offset: number = -75) {
   const element = document.getElementById(sectionId.replace(/^#/, ''));
   if (element) {
     if (lenis) {
-      lenis.scrollTo(element, { offset, duration: 1.3 });
+      lenis.scrollTo(element, { offset, duration: 1.1 });
     } else {
       element.scrollIntoView({ behavior: 'smooth' });
     }

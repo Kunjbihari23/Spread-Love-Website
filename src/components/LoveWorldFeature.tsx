@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Sparkles, HeartHandshake, Play, ShieldCheck, Palette, Star, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { LOVE_WORLD_DATA, PROJECTS_DATA } from '../data/mockData';
 import { Character } from '../types';
 
@@ -29,47 +29,33 @@ export const LoveWorldFeature: React.FC<LoveWorldFeatureProps> = ({
   // Island-rise: trailer blooms open, pillars float up, map + CTA lift
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-lw="header"] > *', {
-        y: 30,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-lw="header"] > *', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-lw="trailer"]', {
-        scale: 0.92,
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '[data-lw="trailer"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      scrollReveal('[data-lw="trailer"]', { scale: 0.94, y: 24 }, {
+        trigger: '[data-lw="trailer"]',
+        duration: 0.45,
       });
 
-      gsap.from('[data-lw="pillar"]', {
-        y: 50,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
+      scrollReveal('[data-lw="pillar"]', { y: 28 }, {
+        trigger: '[data-lw="pillars"]',
+        stagger: 0.08,
+        duration: 0.4,
         ease: 'back.out(1.3)',
-        scrollTrigger: { trigger: '[data-lw="pillars"]', start: 'top 85%', toggleActions: ST.toggleActions },
       });
 
-      gsap.from('[data-lw="map"]', {
-        y: 36,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: '[data-lw="map"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      scrollReveal('[data-lw="map"]', { y: 22 }, {
+        trigger: '[data-lw="map"]',
+        duration: 0.4,
       });
 
-      gsap.from('[data-lw="cta"]', {
-        scale: 0.94,
-        opacity: 0,
-        duration: 0.65,
+      scrollReveal('[data-lw="cta"]', { scale: 0.96 }, {
+        trigger: '[data-lw="cta"]',
+        duration: 0.4,
         ease: 'back.out(1.5)',
-        scrollTrigger: { trigger: '[data-lw="cta"]', start: 'top 90%', toggleActions: ST.toggleActions },
       });
     });
     return () => mm.revert();

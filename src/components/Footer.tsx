@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Heart, Sparkles, Youtube, Instagram, Facebook, BookOpen, ExternalLink, Mail, CheckCircle2, ArrowRight } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 
 interface FooterProps {
   onOpenArchive: () => void;
@@ -20,13 +20,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
   // Soft goodbye: columns fade-up stagger
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-ft="col"]', {
-        y: 28,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-ft="col"]', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
     });
     return () => mm.revert();

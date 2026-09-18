@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { BookOpen, Calendar, Clock, ArrowRight, Sparkles } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { BLOG_POSTS_DATA } from '../data/mockData';
 import { BlogPost } from '../types';
 
@@ -14,25 +14,15 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
   // Journal open: callout from left, articles from right
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-blog="callout"]', {
-        x: -40,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-blog="callout"]', { x: -28 }, {
+        trigger: sectionRef.current,
+        duration: 0.4,
       });
 
-      gsap.from('[data-blog="card"]', {
-        x: 40,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '[data-blog="grid"]',
-          start: 'top 88%',
-          toggleActions: ST.toggleActions,
-        },
+      scrollReveal('[data-blog="card"]', { x: 28 }, {
+        trigger: '[data-blog="grid"]',
+        stagger: 0.08,
+        duration: 0.4,
       });
     });
     return () => mm.revert();

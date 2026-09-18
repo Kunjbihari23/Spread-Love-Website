@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Heart, Sparkles, PartyPopper, MessageSquareHeart, Star, Send, Award } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { CelebrationWish } from '../types';
 
 interface CelebrationSectionProps {
@@ -18,56 +18,31 @@ export const CelebrationSection: React.FC<CelebrationSectionProps> = ({
 }) => {
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Party pop: header, stats bounce, letter scaleY, wish cascade
+  // Party pop: header, stats bounce, letter scale, wish cascade
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-cel="header"] > *', {
-        y: 28,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-cel="header"] > *', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-cel="stat"]', {
-        y: 40,
-        scale: 0.8,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
+      scrollReveal('[data-cel="stat"]', { y: 24, scale: 0.88 }, {
+        trigger: '[data-cel="stats"]',
+        stagger: 0.08,
+        duration: 0.4,
         ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: '[data-cel="stats"]',
-          start: 'top 85%',
-          toggleActions: ST.toggleActions,
-        },
       });
 
-      gsap.from('[data-cel="letter"]', {
-        scaleY: 0.92,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power2.out',
-        transformOrigin: 'center top',
-        scrollTrigger: {
-          trigger: '[data-cel="letter"]',
-          start: 'top 88%',
-          toggleActions: ST.toggleActions,
-        },
+      scrollReveal('[data-cel="letter"]', { scale: 0.96, y: 16 }, {
+        trigger: '[data-cel="letter"]',
+        duration: 0.4,
       });
 
-      gsap.from('[data-cel="wish"]', {
-        y: 32,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '[data-cel="wishes"]',
-          start: 'top 88%',
-          toggleActions: ST.toggleActions,
-        },
+      scrollReveal('[data-cel="wish"]', { y: 20 }, {
+        trigger: '[data-cel="wishes"]',
+        stagger: 0.08,
+        duration: 0.35,
       });
     });
     return () => mm.revert();

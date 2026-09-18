@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Image, Maximize2 } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { GALLERY_DATA } from '../data/mockData';
 import { GalleryItem } from '../types';
 
@@ -11,6 +11,7 @@ interface GallerySectionProps {
 export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage }) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const sectionRef = useRef<HTMLElement>(null);
+  const didMountFilter = useRef(false);
 
   const categories = [
     { id: 'all', label: 'All Media' },
@@ -28,36 +29,37 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage })
   // Photo scatter — tiles tumble in with slight rotation
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-gal="header"] > *', {
-        y: 24,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-gal="header"] > *', { y: 16 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-gal="item"]', {
-        scale: 0.88,
-        opacity: 0,
-        rotation: (i) => (i % 2 === 0 ? -4 : 4),
-        stagger: { each: 0.07, from: 'center' },
-        duration: 0.55,
+      scrollReveal('[data-gal="item"]', {
+        scale: 0.94,
+        rotation: (i: number) => (i % 2 === 0 ? -3 : 3),
+      }, {
+        trigger: '[data-gal="grid"]',
+        stagger: { each: 0.05, from: 'center' },
+        duration: 0.4,
         ease: 'back.out(1.3)',
-        scrollTrigger: { trigger: '[data-gal="grid"]', start: 'top 85%', toggleActions: ST.toggleActions },
       });
     });
     return () => mm.revert();
   }, { scope: sectionRef });
 
   useEffect(() => {
+    if (!didMountFilter.current) {
+      didMountFilter.current = true;
+      return;
+    }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const items = sectionRef.current?.querySelectorAll('[data-gal="item"]');
     if (!items?.length) return;
     gsap.fromTo(
       items,
-      { scale: 0.92, opacity: 0, rotation: (i: number) => (i % 2 === 0 ? -3 : 3) },
-      { scale: 1, opacity: 1, rotation: 0, stagger: 0.05, duration: 0.4, ease: 'power2.out' }
+      { scale: 0.96, autoAlpha: 0, rotation: (i: number) => (i % 2 === 0 ? -2 : 2) },
+      { scale: 1, autoAlpha: 1, rotation: 0, stagger: 0.04, duration: 0.35, ease: 'power2.out' }
     );
   }, [activeCategory]);
 

@@ -23,22 +23,49 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
   // Love-bloom entrance + gentle float loops (unique to hero)
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.4 } });
 
-      tl.from('[data-hero="badge"]', { y: -28, opacity: 0, duration: 0.55, ease: 'back.out(1.6)' })
-        .from('[data-hero="headline"]', { y: 36, opacity: 0, duration: 0.7 }, '-=0.25')
-        .from('[data-hero="sub"]', { y: 20, opacity: 0, duration: 0.5 }, '-=0.35')
-        .from('[data-hero="cta"]', { y: 24, opacity: 0, stagger: 0.08, duration: 0.45 }, '-=0.25')
-        .from('[data-hero="companions"]', { y: 16, opacity: 0, duration: 0.45 }, '-=0.2')
-        .from(
-          '[data-hero="artwork"]',
-          { scale: 0.88, opacity: 0, rotation: 8, duration: 0.85, ease: 'power2.out' },
-          '-=0.75'
+      // Native timeline.fromTo — enterFrom() would play immediately and break sequencing
+      tl.fromTo(
+        '[data-hero="badge"]',
+        { autoAlpha: 0, y: -16 },
+        { autoAlpha: 1, y: 0, duration: 0.35, ease: 'back.out(1.6)' }
+      )
+        .fromTo(
+          '[data-hero="headline"]',
+          { autoAlpha: 0, y: 24 },
+          { autoAlpha: 1, y: 0 },
+          '-=0.15'
         )
-        .from(
-          [dollBadgeRef.current, belinhaBadgeRef.current],
-          { scale: 0, opacity: 0, stagger: 0.15, duration: 0.5, ease: 'back.out(2)' },
-          '-=0.4'
+        .fromTo(
+          '[data-hero="sub"]',
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.35 },
+          '-=0.2'
+        )
+        .fromTo(
+          '[data-hero="cta"]',
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.35 },
+          '-=0.15'
+        )
+        .fromTo(
+          '[data-hero="companions"]',
+          { autoAlpha: 0, y: 12 },
+          { autoAlpha: 1, y: 0, duration: 0.35 },
+          '-=0.12'
+        )
+        .fromTo(
+          '[data-hero="artwork"]',
+          { autoAlpha: 0, scale: 0.94, rotation: 4 },
+          { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45 },
+          '-=0.35'
+        )
+        .fromTo(
+          [dollBadgeRef.current, belinhaBadgeRef.current].filter(Boolean),
+          { autoAlpha: 0, scale: 0.6 },
+          { autoAlpha: 1, scale: 1, stagger: 0.08, duration: 0.4, ease: 'back.out(2)' },
+          '-=0.25'
         );
 
       if (dollBadgeRef.current) {
@@ -49,7 +76,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
-          delay: 1.2,
+          delay: 0.6,
         });
       }
       if (belinhaBadgeRef.current) {
@@ -60,7 +87,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
-          delay: 1.8,
+          delay: 0.7,
         });
       }
       if (floatingHeartRef.current) {
@@ -72,6 +99,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
           repeat: -1,
           yoyo: true,
           ease: 'power1.inOut',
+          delay: 0.6,
         });
       }
       if (floatingStarRef.current) {
@@ -81,6 +109,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
           duration: 12,
           repeat: -1,
           ease: 'none',
+          delay: 0.6,
         });
       }
       if (floatingSmileRef.current) {
@@ -91,6 +120,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) =>
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
+          delay: 0.6,
         });
       }
     });

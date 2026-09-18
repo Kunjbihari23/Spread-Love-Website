@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Youtube, Instagram, Facebook, ArrowUpRight, Heart, Share2, BookOpen, ExternalLink, Sparkles } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { SOCIAL_CHANNELS_DATA, OLD_WEBSITE_ARCHIVE } from '../data/mockData';
 
 interface SocialSectionProps {
@@ -13,51 +13,28 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ onOpenArchive }) =
   // Connection pulse: header, chips scale, channels y, archive y
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-soc="header"] > *', {
-        y: 28,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-soc="header"] > *', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-soc="chip"]', {
-        scale: 0.7,
-        opacity: 0,
-        stagger: 0.07,
-        duration: 0.45,
+      scrollReveal('[data-soc="chip"]', { scale: 0.85 }, {
+        trigger: '[data-soc="flow"]',
+        stagger: 0.06,
+        duration: 0.35,
         ease: 'back.out(1.5)',
-        scrollTrigger: {
-          trigger: '[data-soc="flow"]',
-          start: 'top 85%',
-          toggleActions: ST.toggleActions,
-        },
       });
 
-      gsap.from('[data-soc="channel"]', {
-        y: 36,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '[data-soc="channels"]',
-          start: 'top 88%',
-          toggleActions: ST.toggleActions,
-        },
+      scrollReveal('[data-soc="channel"]', { y: 24 }, {
+        trigger: '[data-soc="channels"]',
+        stagger: 0.08,
+        duration: 0.4,
       });
 
-      gsap.from('[data-soc="archive"]', {
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '[data-soc="archive"]',
-          start: 'top 90%',
-          toggleActions: ST.toggleActions,
-        },
+      scrollReveal('[data-soc="archive"]', { y: 20 }, {
+        trigger: '[data-soc="archive"]',
+        duration: 0.4,
       });
     });
     return () => mm.revert();

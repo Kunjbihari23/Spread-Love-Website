@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Play, Film, Clock, Eye } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { VIDEOS_DATA } from '../data/mockData';
 import { VideoItem } from '../types';
 
@@ -16,40 +16,28 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
   // Curtain open — premiere scales in, play pulse, seats fill
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-vid="header"] > *', {
-        y: 28,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-vid="header"] > *', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-vid="featured"]', {
-        y: 48,
-        scale: 0.94,
-        opacity: 0,
-        duration: 0.75,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '[data-vid="featured"]', start: 'top 85%', toggleActions: ST.toggleActions },
+      scrollReveal('[data-vid="featured"]', { y: 28, scale: 0.96 }, {
+        trigger: '[data-vid="featured"]',
+        duration: 0.45,
       });
 
-      gsap.from('#featured-video-play-btn', {
-        scale: 0.6,
-        opacity: 0,
-        duration: 0.5,
+      scrollReveal('#featured-video-play-btn', { scale: 0.7 }, {
+        trigger: '[data-vid="featured"]',
+        duration: 0.4,
+        delay: 0.1,
         ease: 'back.out(2)',
-        delay: 0.15,
-        scrollTrigger: { trigger: '[data-vid="featured"]', start: 'top 85%', toggleActions: ST.toggleActions },
       });
 
-      gsap.from('[data-vid="card"]', {
-        y: 40,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: '[data-vid="grid"]', start: 'top 88%', toggleActions: ST.toggleActions },
+      scrollReveal('[data-vid="card"]', { y: 24 }, {
+        trigger: '[data-vid="grid"]',
+        stagger: 0.08,
+        duration: 0.4,
       });
     });
     return () => mm.revert();

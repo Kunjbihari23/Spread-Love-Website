@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Star, Layers, ArrowRight, Eye } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { PROJECTS_DATA } from '../data/mockData';
 import { Project } from '../types';
 
@@ -11,6 +11,7 @@ interface ProjectsSectionProps {
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectProject }) => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const sectionRef = useRef<HTMLElement>(null);
+  const didMountFilter = useRef(false);
 
   const categories = [
     { id: 'all', label: 'All Projects' },
@@ -28,37 +29,35 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectProjec
   // Toy-shelf: cards hop onto shelf from below
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-pj="header"] > *', {
-        y: 24,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-pj="header"] > *', { y: 16 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-pj="card"]', {
-        y: 56,
-        opacity: 0,
-        rotation: 2,
-        stagger: 0.1,
-        duration: 0.55,
+      scrollReveal('[data-pj="card"]', { y: 32, rotation: 1.5 }, {
+        trigger: '[data-pj="grid"]',
+        stagger: 0.06,
+        duration: 0.4,
         ease: 'back.out(1.4)',
-        scrollTrigger: { trigger: '[data-pj="grid"]', start: 'top 85%', toggleActions: ST.toggleActions },
       });
     });
     return () => mm.revert();
   }, { scope: sectionRef });
 
-  // Re-animate cards when filter changes
+  // Re-animate cards when filter changes (skip first mount)
   useEffect(() => {
+    if (!didMountFilter.current) {
+      didMountFilter.current = true;
+      return;
+    }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cards = sectionRef.current?.querySelectorAll('[data-pj="card"]');
     if (!cards?.length) return;
     gsap.fromTo(
       cards,
-      { y: 24, opacity: 0, scale: 0.96 },
-      { y: 0, opacity: 1, scale: 1, stagger: 0.06, duration: 0.4, ease: 'power2.out' }
+      { y: 16, autoAlpha: 0, scale: 0.97 },
+      { y: 0, autoAlpha: 1, scale: 1, stagger: 0.05, duration: 0.35, ease: 'power2.out' }
     );
   }, [activeFilter]);
 

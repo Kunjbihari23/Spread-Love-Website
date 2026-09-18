@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Sparkles, Star, ArrowRight } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { TIMELINE_DATA } from '../data/mockData';
 import { Milestone } from '../types';
 
@@ -20,31 +20,22 @@ export const TimelineSection: React.FC<TimelineSectionProps> = () => {
   // Journey-path scroll reveal — years march in like milestones on a path
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-tl="header"] > *', {
-        y: 28,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-tl="header"] > *', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
-      gsap.from('[data-tl="year"]', {
-        x: -40,
-        opacity: 0,
-        scale: 0.85,
-        stagger: 0.06,
-        duration: 0.45,
+      scrollReveal('[data-tl="year"]', { x: -28, scale: 0.92 }, {
+        trigger: '[data-tl="years"]',
+        stagger: 0.05,
+        duration: 0.4,
         ease: 'back.out(1.4)',
-        scrollTrigger: { trigger: '[data-tl="years"]', start: 'top 85%', toggleActions: ST.toggleActions },
       });
 
-      gsap.from(cardRef.current, {
-        y: 48,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: cardRef.current, start: 'top 88%', toggleActions: ST.toggleActions },
+      scrollReveal(cardRef.current, { y: 28 }, {
+        trigger: cardRef.current,
+        duration: 0.4,
       });
     });
     return () => mm.revert();
@@ -56,8 +47,8 @@ export const TimelineSection: React.FC<TimelineSectionProps> = () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     gsap.fromTo(
       cardRef.current,
-      { opacity: 0.5, y: 15, scale: 0.98 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(1.7)' }
+      { autoAlpha: 0.5, y: 12, scale: 0.98 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.35, ease: 'back.out(1.7)' }
     );
   }, [selectedYear]);
 

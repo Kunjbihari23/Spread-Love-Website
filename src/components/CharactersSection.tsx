@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Heart, Sparkles, Star, Smile, Volume2, ArrowRight } from 'lucide-react';
-import { gsap, useGSAP, whenMotionOk, ST } from '../lib/motion';
+import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { CHARACTERS_DATA } from '../data/mockData';
 import { Character } from '../types';
 
@@ -36,40 +36,24 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({ onSelectCh
   // Doll parade: header fade-up, hero cards from left/right, roster pop-stagger
   useGSAP(() => {
     const mm = whenMotionOk(() => {
-      gsap.from('[data-ch="header"] > *', {
-        y: 28,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.55,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: sectionRef.current, ...ST },
+      scrollReveal('[data-ch="header"] > *', { y: 18 }, {
+        trigger: sectionRef.current,
+        stagger: 0.08,
+        duration: 0.35,
       });
 
       gsap.utils.toArray<HTMLElement>('[data-ch="hero-card"]').forEach((el, i) => {
-        gsap.from(el, {
-          x: i % 2 === 0 ? -60 : 60,
-          opacity: 0,
-          duration: 0.65,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 88%',
-            toggleActions: ST.toggleActions,
-          },
+        scrollReveal(el, { x: i % 2 === 0 ? -40 : 40 }, {
+          trigger: el,
+          duration: 0.4,
         });
       });
 
-      gsap.from('[data-ch="roster-card"]', {
-        scale: 0.85,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 0.5,
+      scrollReveal('[data-ch="roster-card"]', { scale: 0.92 }, {
+        trigger: '[data-ch="roster"]',
+        stagger: 0.06,
+        duration: 0.4,
         ease: 'back.out(1.5)',
-        scrollTrigger: {
-          trigger: '[data-ch="roster"]',
-          start: 'top 85%',
-          toggleActions: ST.toggleActions,
-        },
       });
     });
     return () => mm.revert();
