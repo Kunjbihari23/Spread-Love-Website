@@ -1,129 +1,122 @@
 import React, { useRef } from 'react';
-import { BookOpen, Calendar, Clock, ArrowRight } from 'lucide-react';
+import { ArrowRight, ExternalLink, Calendar } from 'lucide-react';
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { BLOG_POSTS_DATA } from '../data/mockData';
+import { OLD_SITE } from '../data/clientAssets';
 import { BlogPost } from '../types';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
 
 interface BlogSectionProps {
   onSelectPost: (post: BlogPost) => void;
 }
 
-export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
-  const sectionRef = useRef<HTMLElement>(null);
+const HUES = [
+  'var(--rb-pink)',
+  'var(--rb-orange)',
+  'var(--rb-green)',
+  'var(--rb-blue)',
+  'var(--rb-violet)',
+  'var(--rb-teal)',
+];
 
-  // GSAP scroll reveals with reverse support on scroll re-entry
+/** Chapter 11 — real posts from lovestar.world, plus one clear route there. */
+export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
+  const ref = useRef<HTMLElement>(null);
+  const posts = BLOG_POSTS_DATA.slice(0, 6);
+
   useGSAP(
     () => {
       const mm = whenMotionOk(() => {
-        scrollReveal('[data-blog="callout"]', { x: -28 }, {
-          trigger: sectionRef.current,
-          duration: 0.4,
-          toggleActions: 'play reverse play reverse',
+        scrollReveal('[data-blog="head"] > *', { y: 18 }, {
+          trigger: ref.current,
+          stagger: 0.07,
+          duration: 0.42,
         });
-
-        scrollReveal('[data-blog="card"]', { x: 28 }, {
+        scrollReveal('[data-blog="card"]', { y: 28 }, {
           trigger: '[data-blog="grid"]',
-          stagger: 0.08,
-          duration: 0.4,
-          toggleActions: 'play reverse play reverse',
+          stagger: 0.07,
+          duration: 0.45,
         });
       });
       return () => mm.revert();
     },
-    { scope: sectionRef }
+    { scope: ref }
   );
 
   return (
-    <section ref={sectionRef} id="blog" className="py-16 sm:py-24 bg-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Callout Header with Highlighted Direct Access */}
-        <div
-          data-blog="callout"
-          className="p-5 sm:p-8 md:p-12 rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-950 text-white shadow-xl mb-10 sm:mb-16 relative overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-80 sm:w-96 h-80 sm:h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8">
-            <div className="max-w-2xl space-y-2.5 sm:space-y-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider border border-indigo-400/30">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>Creator's Creative Journal & Diary</span>
-              </div>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white">
-                The Creative Studio Blog
-              </h2>
-              <p className="text-slate-300 text-xs sm:text-base leading-relaxed">
-                Dive deeper into game design diaries, behind-the-scenes doll sculpting photos, children's psychology notes, and monthly parenting activity toolkits.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto">
-              <Button
-                id="visit-blog-primary-btn"
-                variant="primary"
-                size="lg"
-                onClick={() => onSelectPost(BLOG_POSTS_DATA[0])}
-                icon={<ArrowRight className="w-4 h-4" />}
-                className="w-full sm:w-auto cursor-pointer"
-              >
-                Read Latest 10-Yr Essay
-              </Button>
-            </div>
+    <section
+      ref={ref}
+      id="blog"
+      className="rb-band--violet rb-surface relative overflow-hidden py-[var(--section-py-lg)]"
+    >
+      <div className="sl-container">
+        <div data-blog="head" className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <span className="rb-chip">Chapter eleven</span>
+            <h2 className="mt-4 font-display text-[clamp(2.25rem,7vw,4.5rem)] font-extrabold leading-[1] tracking-tight text-[var(--text-primary)]">
+              Sheila writes
+            </h2>
+            <p className="mt-4 text-[var(--text-body-lg)] leading-relaxed text-[var(--text-secondary)]">
+              Her own words, pulled from lovestar.world — happy places, hats, Belinha, and
+              keeping a positive outlook.
+            </p>
           </div>
+
+          <a
+            href={OLD_SITE.blog}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full bg-[var(--band)] px-6 text-sm font-extrabold text-white transition-transform hover:scale-[1.03] cursor-pointer"
+          >
+            <ExternalLink className="h-4 w-4" aria-hidden />
+            Full blog on lovestar.world
+          </a>
         </div>
 
-        {/* Recent Article Cards Grid */}
-        <div data-blog="grid" className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {BLOG_POSTS_DATA.map((post) => (
-            <Card
+        <div data-blog="grid" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post, i) => (
+            <button
               key={post.id}
               data-blog="card"
-              elevation="interactive"
+              type="button"
               onClick={() => onSelectPost(post)}
-              className="p-0 overflow-hidden cursor-pointer bg-slate-50 hover:bg-white border-slate-200/80 flex flex-col justify-between group"
+              className="group flex flex-col overflow-hidden rounded-[1.25rem] bg-white text-left transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer"
+              style={{ boxShadow: `10px 10px 0 0 ${HUES[i % HUES.length]}` }}
             >
-              <div>
-                <div className="relative aspect-16/10 overflow-hidden bg-slate-200">
-                  <img
-                    src={post.coverImage}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-white/90 backdrop-blur-xs text-slate-900 shadow-xs">
-                    {post.category}
-                  </span>
-                </div>
-
-                <div className="p-5 sm:p-6 space-y-3">
-                  <div className="flex items-center gap-2.5 text-xs text-slate-500">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-pink-500" />
-                      {post.date}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-indigo-500" />
-                      {post.readTime}
-                    </span>
-                  </div>
-
-                  <h3 className="font-bold text-base sm:text-lg text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
+              <div className="aspect-16/10 overflow-hidden bg-[var(--surface-muted)]">
+                <img
+                  src={post.coverImage}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  aria-hidden
+                  loading="lazy"
+                  width={700}
+                  height={440}
+                />
+              </div>
+              <div className="flex flex-1 flex-col justify-between gap-4 p-5">
+                <div>
+                  <h3 className="font-display text-lg font-extrabold leading-snug text-[var(--text-primary)]">
                     {post.title}
                   </h3>
-
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-3">
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                     {post.excerpt}
                   </p>
                 </div>
+                <div className="flex items-center justify-between border-t border-[var(--border-soft)] pt-3 text-xs text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" aria-hidden />
+                    {post.date}
+                  </span>
+                  <span
+                    className="inline-flex items-center gap-1 font-extrabold"
+                    style={{ color: HUES[i % HUES.length] }}
+                  >
+                    Read
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden />
+                  </span>
+                </div>
               </div>
-
-              <div className="p-5 sm:p-6 pt-0 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600 group-hover:text-indigo-700">
-                <span>Read Full Article</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Card>
+            </button>
           ))}
         </div>
       </div>

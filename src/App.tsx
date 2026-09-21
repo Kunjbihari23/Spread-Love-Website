@@ -1,142 +1,102 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { IntroSection } from './components/IntroSection';
+import { CreatorSection } from './components/CreatorSection';
+import { ColorfulWorldSection } from './components/ColorfulWorldSection';
 import { OdysseySection } from './components/odyssey/OdysseySection';
 import { LoveWorldFeature } from './components/LoveWorldFeature';
-import { ProjectsSection } from './components/ProjectsSection';
+import { BelinhaSection } from './components/BelinhaSection';
 import { CharactersSection } from './components/CharactersSection';
 import { GallerySection } from './components/GallerySection';
 import { VideosSection } from './components/VideosSection';
-import { CelebrationSection } from './components/CelebrationSection';
 import { BlogSection } from './components/BlogSection';
 import { SocialSection } from './components/SocialSection';
 import { Footer } from './components/Footer';
 import { Modals } from './components/Modals';
 import { ConfettiCanvas } from './components/ConfettiCanvas';
 import { SpreadLoveMagic } from './components/SpreadLoveMagic';
+import { RainbowProgress } from './components/ui/RainbowProgress';
+import { RainbowMarquee } from './components/ui/RainbowMarquee';
 import { useLenisSmoothScroll } from './hooks/useLenisSmoothScroll';
-import { VIDEOS_DATA, BLOG_POSTS_DATA, CELEBRATION_WISHES_DATA } from './data/mockData';
-import { Project, Character, GalleryItem, VideoItem, BlogPost, CelebrationWish } from './types';
+import { VIDEOS_DATA, BLOG_POSTS_DATA } from './data/mockData';
+import { Character, GalleryItem, VideoItem, BlogPost } from './types';
 
 export default function App() {
-  // Initialize Lenis buttery smooth scroll synchronized with GSAP ScrollTrigger
   useLenisSmoothScroll();
 
-  // Modal states
   const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
   const [activeLightbox, setActiveLightbox] = useState<GalleryItem | null>(null);
   const [activeCharacter, setActiveCharacter] = useState<Character | null>(null);
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeBlogPost, setActiveBlogPost] = useState<BlogPost | null>(null);
-  const [showWishModal, setShowWishModal] = useState<boolean>(false);
   const [showArchiveModal, setShowArchiveModal] = useState<boolean>(false);
-
-  // Confetti trigger
   const [confettiCount, setConfettiCount] = useState<number>(0);
 
-  // Celebration wishes state
-  const [wishes, setWishes] = useState<CelebrationWish[]>(CELEBRATION_WISHES_DATA);
+  const handleTriggerConfetti = () => setConfettiCount((prev) => prev + 1);
 
-  const handleTriggerConfetti = () => {
-    setConfettiCount((prev) => prev + 1);
-  };
-
-  const handleOpenAnniversaryVideo = () => {
-    // Open the 10-year anniversary reel by default
-    const anniversaryVideo = VIDEOS_DATA.find((v) => v.id === 'v-10-year-reel') || VIDEOS_DATA[0];
-    setActiveVideo(anniversaryVideo);
-  };
-
-  const handleOpenLoveWorldVideo = () => {
-    const loveWorldVideo = VIDEOS_DATA.find((v) => v.id === 'v-love-world') || VIDEOS_DATA[0];
-    setActiveVideo(loveWorldVideo);
-  };
-
-  const handleAddWish = (newWish: CelebrationWish) => {
-    setWishes((prev) => [newWish, ...prev]);
-    handleTriggerConfetti();
-  };
-
-  const handleLikeWish = (wishId: string) => {
-    setWishes((prev) =>
-      prev.map((w) => (w.id === wishId ? { ...w, hearts: w.hearts + 1 } : w))
-    );
+  const openVideoById = (id: string) => {
+    setActiveVideo(VIDEOS_DATA.find((v) => v.id === id) || VIDEOS_DATA[0]);
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-pink-200 selection:text-pink-900 font-sans">
-      {/* Celebration Confetti Particle Engine */}
-      <ConfettiCanvas trigger={confettiCount} />
+    <div className="min-h-screen bg-white font-sans text-[var(--text-primary)] selection:bg-[var(--rb-yellow)] selection:text-[oklch(25%_0.08_60)]">
+      <a href="#main" className="skip-to-content">
+        Skip to main content
+      </a>
 
-      {/* Interactive GSAP Spread Love Magic Wand & Sparkler */}
+      <RainbowProgress />
+      <ConfettiCanvas trigger={confettiCount} />
       <SpreadLoveMagic onSpreadLove={handleTriggerConfetti} />
 
-      {/* Floating Responsive Navigation */}
       <Navbar
         onOpenArchive={() => setShowArchiveModal(true)}
         onOpenBlogModal={() => setActiveBlogPost(BLOG_POSTS_DATA[0])}
-        onOpenVideoHero={handleOpenAnniversaryVideo}
       />
 
-      <main>
-        {/* 1. HERO / HOME */}
-        <Hero
-          onOpenVideo={handleOpenAnniversaryVideo}
-          onSelectCharacter={(char) => setActiveCharacter(char)}
+      <main id="main">
+        {/* 01 — Cinematic LOVE WORLD film */}
+        <Hero onOpenVideo={() => openVideoById('v-love-world')} />
+
+        {/* 02 — 10 years */}
+        <IntroSection />
+
+        {/* 03 — The creator + her characters */}
+        <CreatorSection />
+
+        <RainbowMarquee
+          items={['Spread Love', '10 Years', 'Belinha', 'Little Sheila', 'Color', 'Kindness']}
         />
 
-        {/* 2. 10-YEAR JOURNEY — STORYBOOK MOTION PICTURE */}
+        {/* 04 — Her colors */}
+        <ColorfulWorldSection />
+
+        {/* 05 — LOVE WORLD flagship */}
+        <LoveWorldFeature onOpenVideo={() => openVideoById('v-love-world')} />
+
+        {/* 06 — The storybook (preserved Odyssey experience) */}
         <OdysseySection />
 
-        {/* 3. LOVE WORLD FLAGSHIP FEATURE */}
-        <LoveWorldFeature
-          onOpenVideo={handleOpenLoveWorldVideo}
-          onSelectCharacter={(char) => setActiveCharacter(char)}
-        />
+        {/* 07 — Belinha: real → character */}
+        <BelinhaSection />
 
-        {/* 4. MY WORK / PROJECTS GALLERY */}
-        <ProjectsSection
-          onSelectProject={(project) => setActiveProject(project)}
-        />
+        {/* 08 — The character universe */}
+        <CharactersSection onSelectCharacter={(char) => setActiveCharacter(char)} />
 
-        {/* 5. CHARACTERS & DOLLS (Spread Love Doll + Belinha Special Focus) */}
-        <CharactersSection
-          onSelectCharacter={(char) => setActiveCharacter(char)}
-        />
+        {/* 09 — Gallery */}
+        <GallerySection onSelectImage={(item) => setActiveLightbox(item)} />
 
-        {/* 6. MULTIMEDIA GALLERY WITH LIGHTBOX */}
-        <GallerySection
-          onSelectImage={(item) => setActiveLightbox(item)}
-        />
+        {/* 10 — Videos */}
+        <VideosSection onPlayVideo={(video) => setActiveVideo(video)} />
 
-        {/* 7. VIDEOS THEATER SECTION */}
-        <VideosSection
-          onPlayVideo={(video) => setActiveVideo(video)}
-        />
+        {/* 11 — Blog */}
+        <BlogSection onSelectPost={(post) => setActiveBlogPost(post)} />
 
-        {/* 8. 10-YEAR CELEBRATION CENTERPIECE */}
-        <CelebrationSection
-          wishes={wishes}
-          onOpenWishModal={() => setShowWishModal(true)}
-          onTriggerConfetti={handleTriggerConfetti}
-          onLikeWish={handleLikeWish}
-        />
-
-        {/* 9. BLOG ENTRY POINT & RECENT POSTS */}
-        <BlogSection
-          onSelectPost={(post) => setActiveBlogPost(post)}
-        />
-
-        {/* 10. SOCIAL MEDIA & COMMUNITY CONTENT FLOW */}
-        <SocialSection
-          onOpenArchive={() => setShowArchiveModal(true)}
-        />
+        {/* 12 — Social */}
+        <SocialSection onOpenArchive={() => setShowArchiveModal(true)} />
       </main>
 
-      {/* 11. PREMIUM COLORFUL FOOTER */}
       <Footer onOpenArchive={() => setShowArchiveModal(true)} />
 
-      {/* CENTRALIZED MODALS CONTROLLER */}
       <Modals
         activeVideo={activeVideo}
         onCloseVideo={() => setActiveVideo(null)}
@@ -144,13 +104,8 @@ export default function App() {
         onCloseLightbox={() => setActiveLightbox(null)}
         activeCharacter={activeCharacter}
         onCloseCharacter={() => setActiveCharacter(null)}
-        activeProject={activeProject}
-        onCloseProject={() => setActiveProject(null)}
         activeBlogPost={activeBlogPost}
         onCloseBlogPost={() => setActiveBlogPost(null)}
-        showWishModal={showWishModal}
-        onCloseWishModal={() => setShowWishModal(false)}
-        onSubmitWish={handleAddWish}
         showArchiveModal={showArchiveModal}
         onCloseArchiveModal={() => setShowArchiveModal(false)}
       />

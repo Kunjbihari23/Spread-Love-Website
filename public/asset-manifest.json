@@ -1,0 +1,166 @@
+{
+  "client_assets": [
+    {
+      "path": "/belinha/belinha-jetski-beach.jpg",
+      "folder": "belinha",
+      "file": "belinha-jetski-beach.jpg"
+    },
+    {
+      "path": "/belinha/belinha-sandcastle.jpg",
+      "folder": "belinha",
+      "file": "belinha-sandcastle.jpg"
+    },
+    {
+      "path": "/belinha/belinha-sunset-held.jpg",
+      "folder": "belinha",
+      "file": "belinha-sunset-held.jpg"
+    },
+    {
+      "path": "/belinha/belinha-sunset-profile.jpg",
+      "folder": "belinha",
+      "file": "belinha-sunset-profile.jpg"
+    },
+    {
+      "path": "/belinha/belinha-star-hat.jpg",
+      "folder": "belinha",
+      "file": "belinha-star-hat.jpg"
+    },
+    {
+      "path": "/belinha/belinha-beads-sunflowers.jpg",
+      "folder": "belinha",
+      "file": "belinha-beads-sunflowers.jpg"
+    },
+    {
+      "path": "/belinha/belinha-birthday-disney.jpg",
+      "folder": "belinha",
+      "file": "belinha-birthday-disney.jpg"
+    },
+    {
+      "path": "/colorful/rainbow-sweets-display.jpg",
+      "folder": "colorful",
+      "file": "rainbow-sweets-display.jpg"
+    },
+    {
+      "path": "/creator/sheila-belinha-sand-heart.jpg",
+      "folder": "creator",
+      "file": "sheila-belinha-sand-heart.jpg"
+    },
+    {
+      "path": "/creator/sheila-belinha-sunset.jpg",
+      "folder": "creator",
+      "file": "sheila-belinha-sunset.jpg"
+    },
+    {
+      "path": "/creator/sheila-portrait-red-hat.jpg",
+      "folder": "creator",
+      "file": "sheila-portrait-red-hat.jpg"
+    },
+    {
+      "path": "/characters/little-sheila-artwork.jpg",
+      "folder": "characters",
+      "file": "little-sheila-artwork.jpg"
+    }
+  ],
+  "blog_images": [
+    {
+      "slug": "my-happy-places",
+      "src": "https://static.wixstatic.com/media/203c26_fce78c360aae4db48a28c188bdd1eecd~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/my-happy-places.jpg"
+    },
+    {
+      "slug": "my-little-belinha",
+      "src": "https://static.wixstatic.com/media/203c26_3799b386bbc84a908debfdc4ef62f6d0~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/my-little-belinha.jpg"
+    },
+    {
+      "slug": "why-wear-hats",
+      "src": "https://static.wixstatic.com/media/203c26_45e98181f37a45c0adeee7d315d24b49~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/why-wear-hats.jpg"
+    },
+    {
+      "slug": "color-your-life",
+      "src": "https://static.wixstatic.com/media/203c26_200ff1d2f6784a11aa2e1f5b6c905aef~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/color-your-life.jpg"
+    },
+    {
+      "slug": "_hats",
+      "src": "https://static.wixstatic.com/media/203c26_2a82829406754f23b64e7948ec09f136~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/_hats.jpg"
+    },
+    {
+      "slug": "journey-toward-a-happier",
+      "src": "https://static.wixstatic.com/media/203c26_ffd8325b9fbb49488f430d63a427ebb8~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/journey-toward-a-happier.jpg"
+    },
+    {
+      "slug": "good-vibes",
+      "src": "https://static.wixstatic.com/media/203c26_7875711c079143f79102792b83d78875~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/good-vibes.jpg"
+    },
+    {
+      "slug": "cultivate-a-positive-mindset",
+      "src": "https://static.wixstatic.com/media/203c26_b729b2b9d7224a1e95fc19120187ce88~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/cultivate-a-positive-mindset.jpg"
+    },
+    {
+      "slug": "a-positive-outlook-on-life",
+      "src": "https://static.wixstatic.com/media/203c26_8392bf0e049548c18fa11f4ebb61ce56~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/a-positive-outlook-on-life.jpg"
+    },
+    {
+      "slug": "dreams",
+      "src": "https://static.wixstatic.com/media/203c26_a97f59850d8b4e069ca42c1dcbf3d757~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/dreams.jpg"
+    },
+    {
+      "slug": "sparkly-energy",
+      "src": "https://static.wixstatic.com/media/203c26_389079c8823c4c9394bd2ef8f7b21a9a~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/sparkly-energy.jpg"
+    },
+    {
+      "slug": "my-work-as-a-app-developer",
+      "src": "https://static.wixstatic.com/media/203c26_6f036628025447efa0caf117e78d0c3e~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/my-work-as-a-app-developer.jpg"
+    },
+    {
+      "slug": "to-build-a-happy-life",
+      "src": "https://static.wixstatic.com/media/203c26_689948639c404b978de65e59eb8e0f36~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/to-build-a-happy-life.jpg"
+    },
+    {
+      "slug": "i-so-thankful",
+      "src": "https://static.wixstatic.com/media/203c26_1bf2c995f6ee4098b77cffff544006bd~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/i-so-thankful.jpg"
+    },
+    {
+      "slug": "thank-you-4",
+      "src": "https://static.wixstatic.com/media/203c26_3e7078c4144f421ab1129743e0653b15~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/thank-you-4.jpg"
+    },
+    {
+      "slug": "embrace-the-world-of-hats",
+      "src": "https://static.wixstatic.com/media/203c26_94f6880ba36e4cc7a55469dc1511a9cf~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/embrace-the-world-of-hats.jpg"
+    },
+    {
+      "slug": "building-trust-kids",
+      "src": "https://static.wixstatic.com/media/203c26_357fa6410f104c3f98e39e8bfc927437~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/building-trust-kids.jpg"
+    },
+    {
+      "slug": "i-learned-to-let-go-of-the-past-and-focus-on-the-present",
+      "src": "https://static.wixstatic.com/media/203c26_241720bee28444a8b701e5f97b9f236a~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/i-learned-to-let-go-of-the-past-and-focus-on-the-present.jpg"
+    },
+    {
+      "slug": "a-fresh-start-1",
+      "src": "https://static.wixstatic.com/media/203c26_7bb33c2a959f4410a0a30034e85a3c54~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/a-fresh-start-1.jpg"
+    },
+    {
+      "slug": "you-are-not-a-drop-in-the-ocean-you-are-the-entire-ocean-in-one-drop",
+      "src": "https://static.wixstatic.com/media/203c26_6f0456375d29408d8075446b78c4a492~mv2.jpg/v1/fit/w_1600,h_1600,al_c,q_80/file.png",
+      "path": "/blog/you-are-not-a-drop-in-the-ocean-you-are-the-entire-ocean-in-one-drop.jpg"
+    }
+  ]
+}

@@ -70,18 +70,12 @@ export const OdysseySection: React.FC = () => {
       /* ── Master reel ───────────────────────────────────────── */
       const tl = gsap.timeline({ defaults: { ease: EASE.story } });
 
-      // Act I — the theater opens and the book presents itself
+      // Act I — soft book reveal (no curtains — client rejected theatre open)
       tl.addLabel('cover', 0)
         .fromTo(
-          '[data-od="curtain-l"]',
-          { xPercent: 0 },
-          { xPercent: -104, duration: 1.1, ease: EASE.page },
-          0
-        )
-        .fromTo(
-          '[data-od="curtain-r"]',
-          { xPercent: 0 },
-          { xPercent: 104, duration: 1.1, ease: EASE.page },
+          '[data-od="book"]',
+          { autoAlpha: 0, y: 36, scale: 0.94 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 1, ease: EASE.page },
           0
         )
         .fromTo(
@@ -733,10 +727,6 @@ export const OdysseySection: React.FC = () => {
             </button>
           </nav>
 
-          {/* Velvet curtains — open on the first scroll */}
-          <div data-od="curtain-l" className="od-curtain od-curtain--l" />
-          <div data-od="curtain-r" className="od-curtain od-curtain--r" />
-
           <div className="od-vignette" />
           <div className="od-grain" />
         </div>
@@ -749,9 +739,12 @@ export const OdysseySection: React.FC = () => {
 
 const OdysseyHeading: React.FC = () => (
   <header className="text-center">
-    <p className="od-hand text-2xl text-[var(--od-gold)]">a storybook in ten chapters of wonder</p>
+    <p className="od-hand text-2xl text-[var(--od-gold)]">an interactive storybook inside our world</p>
     <h2 className="od-story od-foil text-[clamp(2rem,5vw,3.6rem)] font-extrabold leading-tight">
-      The 10-Year Creative Odyssey
+      10 Years of Love
     </h2>
+    <p className="mt-3 text-sm text-white/70 max-w-md mx-auto">
+      Scroll to turn the pages — or keep exploring Characters, Gallery, and Blog anytime.
+    </p>
   </header>
 );

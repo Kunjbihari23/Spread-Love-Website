@@ -1,232 +1,110 @@
-import React, { useState, useRef } from 'react';
-import { Heart, Youtube, Instagram, Facebook, BookOpen, ExternalLink, Mail, CheckCircle2 } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Heart, Youtube, Instagram, Facebook, BookOpen, ExternalLink, ArrowUp } from 'lucide-react';
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
-import { Button } from './ui/Button';
+import { OLD_SITE } from '../data/clientAssets';
 
 interface FooterProps {
   onOpenArchive: () => void;
 }
 
+const SECTIONS = [
+  { href: '#creator', label: 'Creator' },
+  { href: '#love-world', label: 'LOVE WORLD' },
+  { href: '#timeline', label: '10 Years' },
+  { href: '#belinha', label: 'Belinha' },
+  { href: '#characters', label: 'Characters' },
+  { href: '#gallery', label: 'Gallery' },
+  { href: '#videos', label: 'Videos' },
+  { href: '#blog', label: 'Blog' },
+];
+
 export const Footer: React.FC<FooterProps> = ({ onOpenArchive }) => {
-  const [subscribed, setSubscribed] = useState(false);
-  const [email, setEmail] = useState('');
-  const sectionRef = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement>(null);
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setSubscribed(true);
-  };
-
-  // GSAP scroll reveals with reverse support on scroll re-entry
   useGSAP(
     () => {
       const mm = whenMotionOk(() => {
-        scrollReveal('[data-ft="col"]', { y: 20 }, {
-          trigger: sectionRef.current,
-          stagger: 0.08,
+        scrollReveal('[data-ft="row"]', { y: 18 }, {
+          trigger: ref.current,
+          stagger: 0.07,
           duration: 0.4,
-          toggleActions: 'play reverse play reverse',
         });
       });
       return () => mm.revert();
     },
-    { scope: sectionRef }
+    { scope: ref }
   );
 
   return (
-    <footer
-      ref={sectionRef}
-      className="bg-slate-900 text-white pt-16 sm:pt-20 pb-10 sm:pb-12 relative overflow-hidden border-t-4 border-pink-500"
-    >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-pink-500/10 blur-3xl pointer-events-none" />
+    <footer ref={ref} className="relative overflow-hidden bg-[oklch(21%_0.03_300)] text-white">
+      <div className="h-2 w-full" style={{ background: 'var(--gradient-rainbow)' }} aria-hidden />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-12 pb-12 sm:pb-16 border-b border-slate-800">
-          {/* Brand Column */}
-          <div data-ft="col" className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[var(--color-pink-500)] via-[var(--color-rose-500)] to-[var(--color-amber-400)] flex items-center justify-center shadow-md">
-                <Heart className="w-5 h-5 text-white fill-white" />
-              </div>
-              <div>
-                <span className="font-black text-lg sm:text-xl tracking-tight text-white block">
-                  LOVE WORLD
-                </span>
-                <span className="text-[10px] font-bold text-pink-400 uppercase tracking-wider">
-                  10-Year Creative Universe (2014 – 2024)
-                </span>
-              </div>
-            </div>
-
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              Dedicated to crafting kind, imaginative, and safe digital worlds, plush dolls, and storybooks that spark wonder and nurture empathy in young children worldwide.
+      <div className="sl-container py-14 sm:py-16">
+        <div data-ft="row" className="flex flex-col gap-4 border-b border-white/10 pb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="font-display text-[clamp(2rem,6vw,3.5rem)] font-extrabold leading-none">
+              <span className="rb-text-spectrum">Spread Love</span>
             </p>
-
-            <div className="pt-2 flex items-center gap-2.5">
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white transition-colors flex items-center justify-center shadow-xs"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-pink-600 text-slate-300 hover:text-white transition-colors flex items-center justify-center shadow-xs"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white transition-colors flex items-center justify-center shadow-xs"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href="#blog"
-                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition-colors flex items-center justify-center shadow-xs"
-                aria-label="Blog"
-              >
-                <BookOpen className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-
-          {/* Quick Nav 1 */}
-          <div data-ft="col" className="lg:col-span-2 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-pink-400">
-              Explore Hub
-            </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
-              <li>
-                <a href="#hero" className="hover:text-pink-400 transition-colors block py-1">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#timeline" className="hover:text-pink-400 transition-colors block py-1">
-                  10-Year Journey
-                </a>
-              </li>
-              <li>
-                <a href="#love-world" className="hover:text-pink-400 transition-colors font-semibold text-pink-300 block py-1">
-                  LOVE WORLD Flagship
-                </a>
-              </li>
-              <li>
-                <a href="#projects" className="hover:text-pink-400 transition-colors block py-1">
-                  All Projects & Games
-                </a>
-              </li>
-              <li>
-                <a href="#celebration" className="hover:text-pink-400 transition-colors block py-1">
-                  Anniversary Celebration
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick Nav 2 */}
-          <div data-ft="col" className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400">
-              Characters & Content
-            </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
-              <li>
-                <a href="#characters" className="hover:text-amber-400 transition-colors block py-1">
-                  Spread Love Doll & Belinha
-                </a>
-              </li>
-              <li>
-                <a href="#gallery" className="hover:text-amber-400 transition-colors block py-1">
-                  Multimedia Gallery
-                </a>
-              </li>
-              <li>
-                <a href="#videos" className="hover:text-amber-400 transition-colors block py-1">
-                  Cinema & Trailers
-                </a>
-              </li>
-              <li>
-                <a href="#blog" className="hover:text-amber-400 transition-colors block py-1">
-                  Creator's Diary Blog
-                </a>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenArchive}
-                  className="hover:text-amber-400 transition-colors text-left flex items-center gap-1.5 py-1 cursor-pointer"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>Classic Archive (2014-2021)</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div data-ft="col" className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              Family Club Newsletter
-            </h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Receive free printable coloring books, lullaby audio tracks, and early access codes for LOVE WORLD.
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
+              A colorful creative world by Sheila Rocha. Characters, photographs, and artwork are hers.
             </p>
+          </div>
 
-            {subscribed ? (
-              <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Subscribed! Check your inbox for the welcome coloring sheet.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Parent's email address..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 min-h-[44px]"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="sm"
-                  className="w-full"
-                >
-                  Join Family Club
-                </Button>
-              </form>
-            )}
+          <div className="flex gap-2.5">
+            {[
+              { href: 'https://youtube.com', Icon: Youtube, label: 'YouTube', hue: 'var(--rb-red)' },
+              { href: 'https://instagram.com', Icon: Instagram, label: 'Instagram', hue: 'var(--rb-violet)' },
+              { href: 'https://facebook.com', Icon: Facebook, label: 'Facebook', hue: 'var(--rb-blue)' },
+              { href: OLD_SITE.blog, Icon: BookOpen, label: 'Blog', hue: 'var(--rb-green)' },
+            ].map(({ href, Icon, label, hue }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 transition-colors hover:text-white cursor-pointer"
+                style={{ ['--hover-hue' as string]: hue }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = hue)}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'oklch(100% 0 0 / 0.1)')}
+              >
+                <Icon className="h-5 w-5" aria-hidden />
+              </a>
+            ))}
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-center sm:text-left">
-          <p>© 2014 – 2026 LOVE WORLD Creative Universe. All rights reserved. Handcrafted with love.</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <span className="text-slate-400">Frontend Prototype</span>
-            <span>•</span>
-            <button onClick={onOpenArchive} className="hover:text-pink-400 transition-colors cursor-pointer">
-              Old Website Archive
-            </button>
-            <span>•</span>
-            <a href="#hero" className="hover:text-pink-400 transition-colors">
-              Back to Top ↑
+        <nav data-ft="row" className="flex flex-wrap gap-x-6 gap-y-3 py-8" aria-label="Footer navigation">
+          {SECTIONS.map((s) => (
+            <a
+              key={s.href}
+              href={s.href}
+              className="text-sm font-bold text-white/70 transition-colors hover:text-white"
+            >
+              {s.label}
             </a>
-          </div>
+          ))}
+          <button
+            type="button"
+            onClick={onOpenArchive}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-white/70 transition-colors hover:text-white cursor-pointer"
+          >
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            lovestar.world
+          </button>
+        </nav>
+
+        <div data-ft="row" className="flex flex-col items-start gap-3 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <p className="inline-flex items-center gap-1.5">
+            Made with <Heart className="h-3.5 w-3.5 fill-[var(--rb-pink)] text-[var(--rb-pink)]" aria-hidden /> for Spread Love
+          </p>
+          <a
+            href="#hero"
+            className="inline-flex min-h-11 items-center gap-1.5 font-bold text-white/70 transition-colors hover:text-white"
+          >
+            <ArrowUp className="h-4 w-4" aria-hidden />
+            Back to top
+          </a>
         </div>
       </div>
     </footer>

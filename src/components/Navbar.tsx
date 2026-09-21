@@ -1,361 +1,245 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Menu,
   X,
-  Heart,
-  Sparkles,
   BookOpen,
   ExternalLink,
-  ArrowRight,
-  Compass,
-  Layers,
-  Users,
-  Image,
-  Film,
-  PartyPopper,
-  Share2,
   Youtube,
   Instagram,
   Facebook,
+  ArrowRight,
 } from 'lucide-react';
-import { Button } from './ui/Button';
 import { gsap } from '../lib/motion';
+import { OLD_SITE } from '../data/clientAssets';
 
 interface NavbarProps {
   onOpenArchive: () => void;
   onOpenBlogModal?: () => void;
-  onOpenVideoHero?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onOpenArchive,
-}) => {
+/** Each destination carries its own spectrum hue. */
+const NAV = [
+  { id: 'intro', name: '10 Years', hue: 'var(--rb-red)' },
+  { id: 'creator', name: 'Creator', hue: 'var(--rb-orange)' },
+  { id: 'colorful-world', name: 'Colors', hue: 'var(--rb-yellow)' },
+  { id: 'love-world', name: 'LOVE WORLD', hue: 'var(--rb-green)' },
+  { id: 'belinha', name: 'Belinha', hue: 'var(--rb-teal)' },
+  { id: 'characters', name: 'Characters', hue: 'var(--rb-blue)' },
+  { id: 'gallery', name: 'Gallery', hue: 'var(--rb-violet)' },
+  { id: 'videos', name: 'Videos', hue: 'var(--rb-pink)' },
+];
+
+const SOCIALS = [
+  { href: 'https://youtube.com', Icon: Youtube, label: 'YouTube', hue: 'var(--rb-red)' },
+  { href: 'https://instagram.com', Icon: Instagram, label: 'Instagram', hue: 'var(--rb-violet)' },
+  { href: 'https://facebook.com', Icon: Facebook, label: 'Facebook', hue: 'var(--rb-blue)' },
+];
+
+export const Navbar: React.FC<NavbarProps> = ({ onOpenArchive }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('hero');
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState('hero');
   const headerRef = useRef<HTMLElement>(null);
 
-  // Primary desktop nav items
-  const navItems = [
-    { id: 'hero', name: 'Home', href: '#hero', icon: Heart },
-    { id: 'timeline', name: '10 Years', href: '#timeline', icon: Compass },
-    { id: 'love-world', name: 'LOVE WORLD', href: '#love-world', icon: Sparkles, highlight: true },
-    { id: 'projects', name: 'My Work', href: '#projects', icon: Layers },
-    { id: 'characters', name: 'Characters', href: '#characters', icon: Users },
-    { id: 'gallery', name: 'Gallery', href: '#gallery', icon: Image },
-    { id: 'videos', name: 'Videos', href: '#videos', icon: Film },
-    { id: 'celebration', name: 'Celebration', href: '#celebration', icon: PartyPopper },
-  ];
-
-  // GSAP Header reveal on load
   useEffect(() => {
-    if (headerRef.current) {
-      gsap.fromTo(
-        headerRef.current,
-        { y: -80, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
-      );
-    }
+    if (!headerRef.current) return;
+    gsap.fromTo(headerRef.current, { y: -70, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' });
   }, []);
 
-  // Scroll detection & Scroll Spy
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-
-      const sections = [
-        'hero',
-        'timeline',
-        'love-world',
-        'projects',
-        'characters',
-        'gallery',
-        'videos',
-        'celebration',
-        'blog',
-        'social',
-      ];
-      const scrollPosition = window.scrollY + 140;
-
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(sectionId);
-            break;
-          }
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      const probe = window.scrollY + 140;
+      for (const { id } of [{ id: 'hero' }, ...NAV, { id: 'blog' }, { id: 'social' }]) {
+        const el = document.getElementById(id);
+        if (el && probe >= el.offsetTop && probe < el.offsetTop + el.offsetHeight) {
+          setActive(id);
+          break;
         }
       }
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on Escape key
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-      }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [mobileMenuOpen]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
-  // Lock body scroll when mobile drawer is open
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = open ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [mobileMenuOpen]);
+  }, [open]);
 
-  const handleLinkClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
-  ) => {
+  const go = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    setMobileMenuOpen(false);
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
+    setOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <header
       ref={headerRef}
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? 'py-2.5 bg-white/90 backdrop-blur-xl shadow-md border-b border-pink-100/80'
-          : 'py-4 bg-white/70 backdrop-blur-lg border-b border-pink-100/40'
+      className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
+        scrolled ? 'bg-white/92 py-2 backdrop-blur-xl' : 'bg-transparent py-4'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4">
-          {/* 1. Left Brand Identity */}
+      {/* Spectrum hairline anchors the bar to the brand */}
+      <div
+        className={`absolute inset-x-0 top-0 h-1 transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: 'var(--gradient-rainbow)' }}
+        aria-hidden
+      />
+
+      <div className="sl-container flex items-center justify-between gap-4">
+        <a
+          href="#hero"
+          onClick={(e) => go(e, 'hero')}
+          className="group flex shrink-0 items-center gap-2.5"
+          aria-label="Spread Love — home"
+        >
+          <span
+            className="flex h-10 w-10 items-center justify-center rounded-2xl font-display text-lg font-extrabold text-white"
+            style={{ background: 'var(--gradient-rainbow-diagonal)' }}
+            aria-hidden
+          >
+            S
+          </span>
+          <span
+            className={`font-display text-lg font-extrabold tracking-tight sm:text-xl ${
+              scrolled ? 'text-[var(--text-primary)]' : 'text-white'
+            }`}
+          >
+            Spread Love
+          </span>
+        </a>
+
+        <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Sections">
+          {NAV.map((item) => {
+            const on = active === item.id;
+            return (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => go(e, item.id)}
+                aria-current={on ? 'true' : undefined}
+                className={`rounded-full px-3.5 py-2 text-xs font-extrabold transition-colors ${
+                  scrolled ? 'text-[var(--text-secondary)]' : 'text-white/80'
+                } hover:text-white`}
+                style={on ? { background: item.hue, color: '#fff' } : undefined}
+                onMouseEnter={(e) => {
+                  if (!on) e.currentTarget.style.background = item.hue;
+                }}
+                onMouseLeave={(e) => {
+                  if (!on) e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                {item.name}
+              </a>
+            );
+          })}
+        </nav>
+
+        <div className="hidden shrink-0 items-center gap-2 xl:flex">
           <a
-            href="#hero"
-            onClick={(e) => handleLinkClick(e, '#hero')}
-            className="flex items-center gap-2.5 group shrink-0 focus:outline-none focus:ring-2 focus:ring-pink-400 rounded-2xl"
-            aria-label="LOVE WORLD Home"
+            href={OLD_SITE.blog}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-xs font-extrabold text-white transition-transform hover:scale-[1.04] cursor-pointer"
+            style={{ background: 'var(--rb-violet)' }}
           >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[var(--color-pink-500)] via-[var(--color-rose-500)] to-[var(--color-amber-400)] flex items-center justify-center shadow-md group-hover:scale-105 group-hover:shadow-pink-500/25 transition-all duration-300">
-              <Heart className="w-5 h-5 text-white fill-white animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-pink-600 transition-colors">
-                  LOVE WORLD
-                </span>
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 border border-pink-200">
-                  10 YRS
-                </span>
-              </div>
-              <p className="text-[10px] font-semibold text-slate-500 hidden sm:block leading-none">
-                Children's Creative Studio
-              </p>
-            </div>
+            <BookOpen className="h-3.5 w-3.5" aria-hidden />
+            Blog
           </a>
-
-          {/* 2. Desktop Navigation Center Bar */}
-          <nav
-            className="hidden lg:flex items-center gap-1 bg-slate-100/80 p-1.5 rounded-full border border-slate-200/80 shadow-inner"
-            aria-label="Main Navigation"
+          <button
+            type="button"
+            onClick={onOpenArchive}
+            className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border-2 px-4 text-xs font-extrabold transition-colors cursor-pointer ${
+              scrolled
+                ? 'border-[var(--text-primary)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-white'
+                : 'border-white/50 text-white hover:bg-white hover:text-[oklch(18%_0.04_300)]'
+            }`}
           >
-            {navItems.map((item) => {
-              const isActive = activeSection === item.id;
-              return (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  onClick={(e) => handleLinkClick(e, item.href)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
-                    isActive
-                      ? 'bg-white text-pink-600 shadow-sm border border-pink-200/60 font-black'
-                      : item.highlight
-                      ? 'text-pink-600 hover:text-pink-700 hover:bg-white/60 font-extrabold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  {item.highlight && (
-                    <Sparkles className="w-3.5 h-3.5 text-pink-500" />
-                  )}
-                  <span>{item.name}</span>
-                </a>
-              );
-            })}
-          </nav>
-
-          {/* 3. Action Hub */}
-          <div className="hidden lg:flex items-center gap-2 shrink-0">
-            <a
-              href="#blog"
-              onClick={(e) => handleLinkClick(e, '#blog')}
-              className="px-3.5 py-2 rounded-full text-xs font-bold text-indigo-700 bg-indigo-50/90 hover:bg-indigo-100 border border-indigo-200/80 transition-all flex items-center gap-1.5 shadow-xs hover:shadow-sm"
-            >
-              <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Blog</span>
-            </a>
-
-            <button
-              id="nav-old-archive-btn"
-              onClick={onOpenArchive}
-              className="px-3.5 py-2 rounded-full text-xs font-bold text-amber-800 bg-amber-50/90 hover:bg-amber-100 border border-amber-200/80 transition-all flex items-center gap-1.5 shadow-xs hover:shadow-sm cursor-pointer"
-              title="Jump to Vintage 2014-2021 Website Archive"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-amber-600" />
-              <span>Old Site</span>
-            </button>
-
-            <Button
-              variant="magic"
-              size="sm"
-              href="#love-world"
-              icon={<Sparkles className="w-3.5 h-3.5" />}
-              iconPosition="left"
-            >
-              Explore LOVE WORLD
-            </Button>
-          </div>
-
-          {/* 4. Mobile Controls */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <a
-              href="#love-world"
-              onClick={(e) => handleLinkClick(e, '#love-world')}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-pink-600 to-rose-500 shadow-sm flex items-center gap-1"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span>LOVE WORLD</span>
-            </a>
-
-            <button
-              id="mobile-menu-toggle-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-pink-600 hover:bg-pink-50 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-400 cursor-pointer"
-              aria-label={
-                mobileMenuOpen
-                  ? 'Close Navigation Menu'
-                  : 'Open Navigation Menu'
-              }
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button>
-          </div>
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            lovestar.world
+          </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-colors xl:hidden cursor-pointer ${
+            scrolled ? 'bg-[var(--surface-muted)] text-[var(--text-primary)]' : 'bg-white/15 text-white'
+          }`}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+        >
+          {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
+        </button>
       </div>
 
-      {/* 5. Mobile Drawer Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 top-[64px] z-50 lg:hidden flex flex-col bg-white/95 backdrop-blur-2xl border-t border-pink-100 shadow-2xl overflow-y-auto animate-fadeIn">
-          <div className="p-5 sm:p-6 space-y-6 max-w-md mx-auto w-full">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3 px-1">
-                Explore Universe
-              </p>
-              <div className="grid grid-cols-2 gap-2.5">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeSection === item.id;
-                  return (
-                    <a
-                      key={item.id}
-                      href={item.href}
-                      onClick={(e) => handleLinkClick(e, item.href)}
-                      className={`px-3.5 py-3 rounded-2xl text-xs font-bold flex items-center gap-2.5 transition-all min-h-[44px] ${
-                        isActive
-                          ? 'bg-pink-50 text-pink-700 border border-pink-200 shadow-sm'
-                          : item.highlight
-                          ? 'bg-gradient-to-r from-pink-50 to-amber-50 text-pink-700 border border-pink-100'
-                          : 'bg-slate-50 text-slate-700 hover:bg-pink-50 hover:text-pink-600 border border-slate-100'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 text-pink-500 shrink-0" />
-                      <span className="truncate">{item.name}</span>
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 space-y-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
-                Connected Hubs
-              </p>
+      {/* Mobile drawer — one full-bleed color row per destination */}
+      {open && (
+        <div className="fixed inset-x-0 bottom-0 top-[68px] z-50 overflow-y-auto bg-white xl:hidden">
+          <nav className="flex flex-col" aria-label="Sections">
+            {NAV.map((item) => (
               <a
-                href="#blog"
-                onClick={(e) => handleLinkClick(e, '#blog')}
-                className="w-full py-3 px-4 rounded-2xl text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-between min-h-[44px]"
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => go(e, item.id)}
+                className="flex min-h-[64px] items-center justify-between px-6 font-display text-xl font-extrabold text-white"
+                style={{ background: item.hue }}
               >
-                <span className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-indigo-600" />
-                  Visit Creator's Diary & Blog
-                </span>
-                <ArrowRight className="w-4 h-4" />
+                {item.name}
+                <ArrowRight className="h-5 w-5" aria-hidden />
               </a>
+            ))}
+          </nav>
 
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenArchive();
-                }}
-                className="w-full py-3 px-4 rounded-2xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center justify-between min-h-[44px] cursor-pointer"
-              >
-                <span className="flex items-center gap-2">
-                  <ExternalLink className="w-4 h-4 text-amber-600" />
-                  Classic Archive Website (2014 – 2021)
-                </span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+          <div className="space-y-3 p-6">
+            <a
+              href={OLD_SITE.blog}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex min-h-12 items-center justify-center gap-2 rounded-full border-2 border-[var(--text-primary)] text-sm font-extrabold text-[var(--text-primary)] cursor-pointer"
+            >
+              <BookOpen className="h-4 w-4" aria-hidden />
+              Read the blog
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                onOpenArchive();
+              }}
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-2 border-[var(--text-primary)] text-sm font-extrabold text-[var(--text-primary)] cursor-pointer"
+            >
+              <ExternalLink className="h-4 w-4" aria-hidden />
+              lovestar.world
+            </button>
 
-            <div className="pt-3 border-t border-slate-100">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
-                Social Channels
-              </p>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 pt-2">
+              {SOCIALS.map(({ href, Icon, label, hue }) => (
                 <a
-                  href="https://youtube.com"
+                  key={label}
+                  href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2.5 px-3 rounded-xl bg-red-50 text-red-600 border border-red-100 text-xs font-bold flex items-center justify-center gap-1.5 min-h-[44px]"
+                  className="flex min-h-12 items-center justify-center gap-1.5 rounded-2xl text-xs font-extrabold text-white"
+                  style={{ background: hue }}
                 >
-                  <Youtube className="w-4 h-4" />
-                  <span>YouTube</span>
+                  <Icon className="h-4 w-4" aria-hidden />
+                  {label}
                 </a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2.5 px-3 rounded-xl bg-pink-50 text-pink-600 border border-pink-100 text-xs font-bold flex items-center justify-center gap-1.5 min-h-[44px]"
-                >
-                  <Instagram className="w-4 h-4" />
-                  <span>Instagram</span>
-                </a>
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2.5 px-3 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 text-xs font-bold flex items-center justify-center gap-1.5 min-h-[44px]"
-                >
-                  <Facebook className="w-4 h-4" />
-                  <span>Facebook</span>
-                </a>
-              </div>
+              ))}
             </div>
           </div>
         </div>

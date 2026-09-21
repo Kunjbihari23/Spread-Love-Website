@@ -1,31 +1,42 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Heart, Sparkles, Wand2, Star, Smile, Flame, Volume2, VolumeX } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Sparkles, Wand2 } from 'lucide-react';
 import gsap from 'gsap';
 
 interface SpreadLoveMagicProps {
   onSpreadLove?: () => void;
 }
 
-const LOVE_EMOJIS = ['💖', '🌟', '✨', '🐾', '🎀', '🎈', '🧸', '🌈', '🌸', '💫'];
+/** Particle colors come from the rainbow spectrum, not emoji. */
+const HUES = [
+  'var(--rb-red)',
+  'var(--rb-orange)',
+  'var(--rb-yellow)',
+  'var(--rb-green)',
+  'var(--rb-teal)',
+  'var(--rb-blue)',
+  'var(--rb-violet)',
+  'var(--rb-pink)',
+];
 
+const SHAPES = ['50%', '50%', '4px'] as const;
+
+/** Floating wand: sprays rainbow confetti. Trail is off by default and opt-in. */
 export const SpreadLoveMagic: React.FC<SpreadLoveMagicProps> = ({ onSpreadLove }) => {
-  const [loveCount, setLoveCount] = useState<number>(10482);
-  const [sparkleTrailActive, setSparkleTrailActive] = useState<boolean>(true);
-  const [saluteToast, setSaluteToast] = useState<string | null>(null);
-  const [isHoveringWand, setIsHoveringWand] = useState(false);
-
+  const [trailOn, setTrailOn] = useState(false);
   const wandRef = useRef<HTMLButtonElement>(null);
-  const toastRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const layerRef = useRef<HTMLDivElement>(null);
+  const reduced = useRef(false);
 
-  // GSAP gentle idle hovering effect on the floating wand
   useEffect(() => {
-    if (!wandRef.current) return;
+    reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  useEffect(() => {
+    if (!wandRef.current || reduced.current) return;
     const ctx = gsap.context(() => {
       gsap.to(wandRef.current, {
-        y: -8,
-        rotation: 3,
-        duration: 2,
+        y: -7,
+        duration: 2.2,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
@@ -34,179 +45,94 @@ export const SpreadLoveMagic: React.FC<SpreadLoveMagicProps> = ({ onSpreadLove }
     return () => ctx.revert();
   }, []);
 
-  // Cursor sparkle trail with GSAP
-  useEffect(() => {
-    if (!sparkleTrailActive) return;
+  const spawn = (x: number, y: number, big = false) => {
+    if (!layerRef.current) return;
 
-    let lastTime = 0;
-    const handleMouseMove = (e: MouseEvent) => {
-      const now = performance.now();
-      if (now - lastTime < 60) return; // Throttle to maintain 60fps
-      lastTime = now;
-
-      createParticle(e.clientX, e.clientY);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [sparkleTrailActive]);
-
-  const createParticle = (x: number, y: number, isBigBurst = false) => {
-    if (!containerRef.current) return;
-
-    const particle = document.createElement('div');
-    const emoji = LOVE_EMOJIS[Math.floor(Math.random() * LOVE_EMOJIS.length)];
-    particle.innerText = emoji;
-    particle.className = 'fixed pointer-events-none select-none z-50';
-
-    const size = isBigBurst ? Math.random() * 24 + 20 : Math.random() * 16 + 14;
-    particle.style.fontSize = `${size}px`;
-    particle.style.left = `${x}px`;
-    particle.style.top = `${y}px`;
-    particle.style.transform = 'translate(-50%, -50%)';
-
-    containerRef.current.appendChild(particle);
+    const dot = document.createElement('span');
+    const size = big ? Math.random() * 12 + 8 : Math.random() * 7 + 5;
+    dot.className = 'fixed pointer-events-none';
+    dot.style.width = `${size}px`;
+    dot.style.height = `${size}px`;
+    dot.style.left = `${x}px`;
+    dot.style.top = `${y}px`;
+    dot.style.background = HUES[Math.floor(Math.random() * HUES.length)];
+    dot.style.borderRadius = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    dot.style.transform = 'translate(-50%, -50%)';
+    layerRef.current.appendChild(dot);
 
     const angle = Math.random() * Math.PI * 2;
-    const distance = isBigBurst ? Math.random() * 180 + 60 : Math.random() * 40 + 15;
-    const targetX = Math.cos(angle) * distance;
-    const targetY = isBigBurst ? Math.sin(angle) * distance - 80 : -Math.random() * 50 - 20;
+    const distance = big ? Math.random() * 200 + 70 : Math.random() * 36 + 12;
 
-    gsap.to(particle, {
-      x: targetX,
-      y: targetY,
+    gsap.to(dot, {
+      x: Math.cos(angle) * distance,
+      y: big ? Math.sin(angle) * distance - 90 : -Math.random() * 44 - 16,
       rotation: Math.random() * 360 - 180,
-      scale: isBigBurst ? 1.4 : 0.8,
       opacity: 0,
-      duration: isBigBurst ? 1.5 : 0.9,
+      scale: big ? 1.3 : 0.6,
+      duration: big ? 1.4 : 0.85,
       ease: 'power2.out',
-      onComplete: () => {
-        particle.remove();
-      },
+      onComplete: () => dot.remove(),
     });
   };
 
-  // Big "Salute & Spread Love" Celebration Trigger
-  const handleSpreadLoveBurst = (e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+  useEffect(() => {
+    if (!trailOn || reduced.current) return;
+    let last = 0;
+    const onMove = (e: MouseEvent) => {
+      const now = performance.now();
+      if (now - last < 55) return;
+      last = now;
+      spawn(e.clientX, e.clientY);
+    };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [trailOn]);
 
-    // Trigger 35 GSAP particles in a fountain
-    for (let i = 0; i < 30; i++) {
-      setTimeout(() => {
-        createParticle(
-          centerX + (Math.random() * 40 - 20),
-          centerY + (Math.random() * 40 - 20),
-          true
-        );
-      }, i * 15);
+  const burst = (e: React.MouseEvent) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 28; i++) {
+      window.setTimeout(() => spawn(cx + (Math.random() * 36 - 18), cy + (Math.random() * 36 - 18), true), i * 14);
     }
 
-    setLoveCount((prev) => prev + 1);
-    if (onSpreadLove) onSpreadLove();
-
-    // GSAP Button Pop Animation
-    if (wandRef.current) {
+    if (wandRef.current && !reduced.current) {
       gsap.fromTo(
         wandRef.current,
-        { scale: 0.8, rotate: -15 },
-        { scale: 1.15, rotate: 15, duration: 0.4, ease: 'back.out(2)', yoyo: true, repeat: 1 }
+        { scale: 0.88, rotate: -12 },
+        { scale: 1.1, rotate: 12, duration: 0.35, ease: 'back.out(2)', yoyo: true, repeat: 1 }
       );
     }
 
-    // Salute message
-    const messages = [
-      "✨ Spread Love Doll & Belinha salute your kind heart!",
-      "💖 1,000 Hugs sent into LOVE WORLD!",
-      "🐾 Belinha is happily wagging her tail for you!",
-      "🌟 You made the universe a brighter, cozier place!",
-      "🎨 Creativity and kindness unlocked forever!"
-    ];
-    const picked = messages[Math.floor(Math.random() * messages.length)];
-    setSaluteToast(picked);
-
-    if (toastRef.current) {
-      gsap.fromTo(
-        toastRef.current,
-        { opacity: 0, y: 30, scale: 0.9 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }
-      );
-    }
-
-    setTimeout(() => {
-      if (toastRef.current) {
-        gsap.to(toastRef.current, {
-          opacity: 0,
-          y: -20,
-          scale: 0.9,
-          duration: 0.4,
-          onComplete: () => setSaluteToast(null),
-        });
-      } else {
-        setSaluteToast(null);
-      }
-    }, 3800);
+    onSpreadLove?.();
   };
 
   return (
     <>
-      {/* Particle Container */}
-      <div ref={containerRef} className="fixed inset-0 pointer-events-none z-50 overflow-hidden" />
+      <div ref={layerRef} className="pointer-events-none fixed inset-0 z-50 overflow-hidden" aria-hidden />
 
-      {/* Floating Salute Notification Toast */}
-      {saluteToast && (
-        <div
-          ref={toastRef}
-          className="fixed bottom-24 right-4 sm:right-8 z-50 max-w-sm bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 text-white p-4 rounded-3xl shadow-2xl border-2 border-white/80 flex items-center gap-3 pointer-events-auto"
-        >
-          <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 text-xl">
-            💝
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-pink-100">
-              10-Year Celebration Salute
-            </p>
-            <p className="text-sm font-extrabold text-white">{saluteToast}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Creative Wand Gadget for Children & Fans */}
-      <div className="fixed bottom-6 right-4 sm:right-8 z-40 flex items-center gap-2">
-        {/* Toggle Trail Button */}
+      <div className="fixed bottom-6 right-4 z-40 flex items-center gap-2 sm:right-8">
         <button
-          onClick={() => setSparkleTrailActive(!sparkleTrailActive)}
-          title={sparkleTrailActive ? 'Turn off magic sparkle trail' : 'Turn on magic sparkle trail'}
-          className={`p-2.5 rounded-full border shadow-md transition-all ${
-            sparkleTrailActive
-              ? 'bg-amber-100 border-amber-300 text-amber-700 hover:bg-amber-200'
-              : 'bg-white/80 backdrop-blur-md border-slate-200 text-slate-400 hover:text-slate-600'
-          }`}
+          type="button"
+          onClick={() => setTrailOn(!trailOn)}
+          aria-pressed={trailOn}
+          className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white bg-white text-[var(--text-secondary)] shadow-elevated transition-colors hover:text-[var(--text-primary)] cursor-pointer"
+          style={trailOn ? { background: 'var(--rb-yellow)', color: '#241a00' } : undefined}
+          title={trailOn ? 'Turn off the sparkle trail' : 'Turn on the sparkle trail'}
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="h-4 w-4" aria-hidden />
         </button>
 
-        {/* Main "Spread Love Magic Wand" Button */}
         <button
           ref={wandRef}
-          onClick={handleSpreadLoveBurst}
-          onMouseEnter={() => setIsHoveringWand(true)}
-          onMouseLeave={() => setIsHoveringWand(false)}
-          className="relative px-4 sm:px-5 py-3 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:from-pink-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl hover:shadow-pink-500/30 flex items-center gap-2.5 border-2 border-white transition-all transform active:scale-95 group cursor-pointer"
+          type="button"
+          onClick={burst}
+          className="inline-flex min-h-12 items-center gap-2.5 rounded-full border-2 border-white px-5 text-sm font-extrabold text-white shadow-floating transition-transform active:scale-95 cursor-pointer"
+          style={{ background: 'var(--gradient-rainbow-diagonal)' }}
         >
-          <span className="w-7 h-7 rounded-full bg-white/25 flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-            <Wand2 className="w-4 h-4 text-white" />
-          </span>
-          <div className="text-left">
-            <span className="block text-[10px] font-bold text-pink-100 uppercase tracking-wider leading-none">
-              Magic Wand
-            </span>
-            <span className="block font-display tracking-tight leading-snug">
-              Spread Love! ({loveCount.toLocaleString()})
-            </span>
-          </div>
-          <Heart className="w-4 h-4 fill-white text-white group-hover:scale-125 transition-transform animate-pulse" />
+          <Wand2 className="h-4 w-4" aria-hidden />
+          Spread love
         </button>
       </div>
     </>
