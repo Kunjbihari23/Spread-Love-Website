@@ -168,3 +168,108 @@
   height: 120px;
   pointer-events: none;
 }
+
+/* ════════════════════════════════════════════════════════════
+   RAINBOW SYSTEM
+   Sections declare a hue band; children inherit it.
+   ════════════════════════════════════════════════════════════ */
+
+.rb-band          { --band: var(--rb-pink);   --band-ink: var(--rb-pink-ink);   --band-paper: var(--rb-pink-paper); }
+.rb-band--red     { --band: var(--rb-red);    --band-ink: var(--rb-red-ink);    --band-paper: var(--rb-red-paper); }
+.rb-band--orange  { --band: var(--rb-orange); --band-ink: var(--rb-orange-ink); --band-paper: var(--rb-orange-paper); }
+.rb-band--yellow  { --band: var(--rb-yellow); --band-ink: var(--rb-yellow-ink); --band-paper: var(--rb-yellow-paper); }
+.rb-band--green   { --band: var(--rb-green);  --band-ink: var(--rb-green-ink);  --band-paper: var(--rb-green-paper); }
+.rb-band--teal    { --band: var(--rb-teal);   --band-ink: var(--rb-teal-ink);   --band-paper: var(--rb-teal-paper); }
+.rb-band--blue    { --band: var(--rb-blue);   --band-ink: var(--rb-blue-ink);   --band-paper: var(--rb-blue-paper); }
+.rb-band--violet  { --band: var(--rb-violet); --band-ink: var(--rb-violet-ink); --band-paper: var(--rb-violet-paper); }
+
+/* Saturated section surface, still light enough for ink text */
+.rb-surface { background: var(--band-paper); }
+
+/* Solid color-block section — white text lives on this */
+.rb-solid {
+  background: var(--band);
+  color: #fff;
+}
+
+/* Text painted with the full spectrum */
+.rb-text-spectrum {
+  background: var(--gradient-rainbow);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Top-edge spectrum rule on a section */
+.rb-edge-top { position: relative; }
+.rb-edge-top::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: var(--gradient-rainbow);
+}
+
+/* Chunky spectrum keyline around a card */
+.rb-frame {
+  border: 4px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--gradient-rainbow-diagonal) border-box;
+}
+
+/* Scroll progress rail (top of viewport) */
+.rb-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: var(--gradient-rainbow);
+  z-index: var(--z-toast);
+  pointer-events: none;
+}
+
+/* Marquee ribbon */
+.rb-marquee {
+  overflow: hidden;
+  background: var(--gradient-rainbow);
+}
+.rb-marquee__track {
+  display: flex;
+  gap: var(--space-8);
+  width: max-content;
+  will-change: transform;
+}
+
+/* Sticker chip — reads as a printed label, not a pastel pill */
+.rb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--radius-pill);
+  background: var(--band);
+  color: #fff;
+  font-weight: var(--weight-extrabold);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* Hand-drawn style underline in the band hue */
+.rb-underline {
+  background-image: linear-gradient(var(--band), var(--band));
+  background-repeat: no-repeat;
+  background-size: 100% 0.28em;
+  background-position: 0 88%;
+}
+
+/* Halftone dot field — printed-paper texture, no blurry orbs */
+.rb-dots {
+  background-image: radial-gradient(var(--band) 1.5px, transparent 1.6px);
+  background-size: 14px 14px;
+  opacity: 0.16;
+}

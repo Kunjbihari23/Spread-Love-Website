@@ -7,20 +7,20 @@ import { ColorfulWorldSection } from './components/ColorfulWorldSection';
 import { OdysseySection } from './components/odyssey/OdysseySection';
 import { LoveWorldFeature } from './components/LoveWorldFeature';
 import { BelinhaSection } from './components/BelinhaSection';
-import { ProjectsSection } from './components/ProjectsSection';
 import { CharactersSection } from './components/CharactersSection';
 import { GallerySection } from './components/GallerySection';
 import { VideosSection } from './components/VideosSection';
-import { CelebrationSection } from './components/CelebrationSection';
 import { BlogSection } from './components/BlogSection';
 import { SocialSection } from './components/SocialSection';
 import { Footer } from './components/Footer';
 import { Modals } from './components/Modals';
 import { ConfettiCanvas } from './components/ConfettiCanvas';
 import { SpreadLoveMagic } from './components/SpreadLoveMagic';
+import { RainbowProgress } from './components/ui/RainbowProgress';
+import { RainbowMarquee } from './components/ui/RainbowMarquee';
 import { useLenisSmoothScroll } from './hooks/useLenisSmoothScroll';
-import { VIDEOS_DATA, BLOG_POSTS_DATA, CELEBRATION_WISHES_DATA } from './data/mockData';
-import { Project, Character, GalleryItem, VideoItem, BlogPost, CelebrationWish } from './types';
+import { VIDEOS_DATA, BLOG_POSTS_DATA } from './data/mockData';
+import { Character, GalleryItem, VideoItem, BlogPost } from './types';
 
 export default function App() {
   useLenisSmoothScroll();
@@ -28,115 +28,71 @@ export default function App() {
   const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
   const [activeLightbox, setActiveLightbox] = useState<GalleryItem | null>(null);
   const [activeCharacter, setActiveCharacter] = useState<Character | null>(null);
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeBlogPost, setActiveBlogPost] = useState<BlogPost | null>(null);
-  const [showWishModal, setShowWishModal] = useState<boolean>(false);
   const [showArchiveModal, setShowArchiveModal] = useState<boolean>(false);
   const [confettiCount, setConfettiCount] = useState<number>(0);
-  const [wishes, setWishes] = useState<CelebrationWish[]>(CELEBRATION_WISHES_DATA);
 
-  const handleTriggerConfetti = () => {
-    setConfettiCount((prev) => prev + 1);
-  };
+  const handleTriggerConfetti = () => setConfettiCount((prev) => prev + 1);
 
-  const handleOpenAnniversaryVideo = () => {
-    const anniversaryVideo = VIDEOS_DATA.find((v) => v.id === 'v-10-year-reel') || VIDEOS_DATA[0];
-    setActiveVideo(anniversaryVideo);
-  };
-
-  const handleOpenLoveWorldVideo = () => {
-    const loveWorldVideo = VIDEOS_DATA.find((v) => v.id === 'v-love-world') || VIDEOS_DATA[0];
-    setActiveVideo(loveWorldVideo);
-  };
-
-  const handleAddWish = (newWish: CelebrationWish) => {
-    setWishes((prev) => [newWish, ...prev]);
-    handleTriggerConfetti();
-  };
-
-  const handleLikeWish = (wishId: string) => {
-    setWishes((prev) =>
-      prev.map((w) => (w.id === wishId ? { ...w, hearts: w.hearts + 1 } : w))
-    );
+  const openVideoById = (id: string) => {
+    setActiveVideo(VIDEOS_DATA.find((v) => v.id === id) || VIDEOS_DATA[0]);
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-pink-200 selection:text-pink-900 font-sans">
+    <div className="min-h-screen bg-white font-sans text-[var(--text-primary)] selection:bg-[var(--rb-yellow)] selection:text-[oklch(25%_0.08_60)]">
       <a href="#main" className="skip-to-content">
         Skip to main content
       </a>
 
+      <RainbowProgress />
       <ConfettiCanvas trigger={confettiCount} />
       <SpreadLoveMagic onSpreadLove={handleTriggerConfetti} />
 
       <Navbar
         onOpenArchive={() => setShowArchiveModal(true)}
         onOpenBlogModal={() => setActiveBlogPost(BLOG_POSTS_DATA[0])}
-        onOpenVideoHero={handleOpenAnniversaryVideo}
       />
 
       <main id="main">
-        {/* 01 — Cinematic LOVE WORLD video */}
-        <Hero onOpenVideo={handleOpenLoveWorldVideo} />
+        {/* 01 — Cinematic LOVE WORLD film */}
+        <Hero onOpenVideo={() => openVideoById('v-love-world')} />
 
-        {/* 02 — Colorful introduction */}
+        {/* 02 — 10 years */}
         <IntroSection />
 
-        {/* 03 — Creator + characters */}
+        {/* 03 — The creator + her characters */}
         <CreatorSection />
 
-        {/* 04 — Her colorful world */}
+        <RainbowMarquee
+          items={['Spread Love', '10 Years', 'Belinha', 'Little Sheila', 'Color', 'Kindness']}
+        />
+
+        {/* 04 — Her colors */}
         <ColorfulWorldSection />
 
-        {/* 05 — LOVE WORLD feature */}
-        <LoveWorldFeature
-          onOpenVideo={handleOpenLoveWorldVideo}
-          onSelectCharacter={(char) => setActiveCharacter(char)}
-        />
+        {/* 05 — LOVE WORLD flagship */}
+        <LoveWorldFeature onOpenVideo={() => openVideoById('v-love-world')} />
 
-        {/* 06 — 10-year storybook (preserved Odyssey) */}
+        {/* 06 — The storybook (preserved Odyssey experience) */}
         <OdysseySection />
 
-        {/* 07 — Belinha: real → creative */}
+        {/* 07 — Belinha: real → character */}
         <BelinhaSection />
 
-        {/* 08 — All characters */}
-        <CharactersSection
-          onSelectCharacter={(char) => setActiveCharacter(char)}
-        />
+        {/* 08 — The character universe */}
+        <CharactersSection onSelectCharacter={(char) => setActiveCharacter(char)} />
 
-        {/* 09 — Projects */}
-        <ProjectsSection
-          onSelectProject={(project) => setActiveProject(project)}
-        />
+        {/* 09 — Gallery */}
+        <GallerySection onSelectImage={(item) => setActiveLightbox(item)} />
 
-        {/* 10 — Visual gallery */}
-        <GallerySection
-          onSelectImage={(item) => setActiveLightbox(item)}
-        />
+        {/* 10 — Videos */}
+        <VideosSection onPlayVideo={(video) => setActiveVideo(video)} />
 
-        {/* 11 — Videos */}
-        <VideosSection
-          onPlayVideo={(video) => setActiveVideo(video)}
-        />
+        {/* 11 — Blog */}
+        <BlogSection onSelectPost={(post) => setActiveBlogPost(post)} />
 
-        {/* 12 — Celebration */}
-        <CelebrationSection
-          wishes={wishes}
-          onOpenWishModal={() => setShowWishModal(true)}
-          onTriggerConfetti={handleTriggerConfetti}
-          onLikeWish={handleLikeWish}
-        />
-
-        {/* 13 — Blog */}
-        <BlogSection
-          onSelectPost={(post) => setActiveBlogPost(post)}
-        />
-
-        {/* 14 — Social */}
-        <SocialSection
-          onOpenArchive={() => setShowArchiveModal(true)}
-        />
+        {/* 12 — Social */}
+        <SocialSection onOpenArchive={() => setShowArchiveModal(true)} />
       </main>
 
       <Footer onOpenArchive={() => setShowArchiveModal(true)} />
@@ -148,13 +104,8 @@ export default function App() {
         onCloseLightbox={() => setActiveLightbox(null)}
         activeCharacter={activeCharacter}
         onCloseCharacter={() => setActiveCharacter(null)}
-        activeProject={activeProject}
-        onCloseProject={() => setActiveProject(null)}
         activeBlogPost={activeBlogPost}
         onCloseBlogPost={() => setActiveBlogPost(null)}
-        showWishModal={showWishModal}
-        onCloseWishModal={() => setShowWishModal(false)}
-        onSubmitWish={handleAddWish}
         showArchiveModal={showArchiveModal}
         onCloseArchiveModal={() => setShowArchiveModal(false)}
       />

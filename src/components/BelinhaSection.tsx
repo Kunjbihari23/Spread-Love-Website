@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { ASSETS } from '../data/clientAssets';
 import { DogFriend } from './odyssey/OdysseyArt';
-import { RainbowArc } from './ui/RainbowArc';
 
 /**
- * Belinha: real life → creative interpretation → character art.
- * Only client Belinha photos + existing DogFriend illustration (no stock dogs).
+ * Chapter 07 — Belinha: real photograph → illustrated character.
+ * Only Sheila's own Belinha assets appear here. No other dogs, anywhere.
  */
 export const BelinhaSection: React.FC = () => {
   const ref = useRef<HTMLElement>(null);
@@ -17,20 +17,32 @@ export const BelinhaSection: React.FC = () => {
         scrollReveal('[data-be="copy"] > *', { y: 18 }, {
           trigger: ref.current,
           stagger: 0.07,
-          duration: 0.4,
+          duration: 0.42,
         });
-        scrollReveal('[data-be="real"]', { x: -24 }, {
-          trigger: ref.current,
+
+        scrollReveal('[data-be="real"]', { x: -30, rotate: -3 }, {
+          trigger: '[data-be="bridge"]',
+          duration: 0.6,
+        });
+        scrollReveal('[data-be="art"]', { x: 30, rotate: 3 }, {
+          trigger: '[data-be="bridge"]',
+          duration: 0.6,
+        });
+
+        // Spectrum arrow draws between the two panels
+        scrollReveal('[data-be="link"]', { scaleX: 0 }, {
+          trigger: '[data-be="bridge"]',
           duration: 0.5,
+          delay: 0.25,
+          ease: 'power2.inOut',
         });
-        scrollReveal('[data-be="art"]', { x: 24 }, {
-          trigger: ref.current,
-          duration: 0.5,
-        });
-        scrollReveal('[data-be="strip"] img', { y: 20, scale: 0.95 }, {
-          trigger: '[data-be="strip"]',
-          stagger: 0.08,
-          duration: 0.4,
+
+        gsap.utils.toArray<HTMLElement>('[data-be="shot"]').forEach((el, i) => {
+          scrollReveal(el, { y: 26, scale: 0.94 }, {
+            trigger: '[data-be="strip"]',
+            duration: 0.45,
+            delay: i * 0.07,
+          });
         });
       });
       return () => mm.revert();
@@ -39,86 +51,97 @@ export const BelinhaSection: React.FC = () => {
   );
 
   const strip = [
-    { src: ASSETS.belinha.sunsetHeld, alt: 'Belinha held toward the sunset' },
-    { src: ASSETS.belinha.sandcastle, alt: 'Belinha with a sandcastle' },
-    { src: ASSETS.belinha.jetski, alt: 'Belinha at the beach' },
-    { src: ASSETS.belinha.beads, alt: 'Belinha with beads and sunflowers' },
-    { src: ASSETS.belinha.birthday, alt: 'Belinha on a birthday celebration' },
+    { src: ASSETS.belinha.sunsetHeld, alt: 'Belinha held toward the sunset', hue: 'var(--rb-orange)' },
+    { src: ASSETS.belinha.sandcastle, alt: 'Belinha beside a sandcastle', hue: 'var(--rb-yellow)' },
+    { src: ASSETS.belinha.jetski, alt: 'Belinha at the beach', hue: 'var(--rb-teal)' },
+    { src: ASSETS.belinha.beads, alt: 'Belinha with beads and sunflowers', hue: 'var(--rb-green)' },
+    { src: ASSETS.belinha.birthday, alt: 'Belinha at a birthday celebration', hue: 'var(--rb-pink)' },
   ];
 
   return (
     <section
       ref={ref}
       id="belinha"
-      className="relative overflow-hidden py-[var(--section-py-lg)]"
-      style={{ background: 'var(--gradient-beach)' }}
+      className="rb-band--orange rb-surface relative overflow-hidden py-[var(--section-py-lg)]"
     >
       <div className="sl-container relative z-10">
-        <div data-be="copy" className="max-w-2xl mx-auto text-center space-y-4 mb-12 sm:mb-16">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-700">
-            Best friend &amp; muse
-          </p>
-          <h2 className="font-display text-[var(--text-heading-xl)] font-extrabold text-[var(--text-primary)] leading-[1.15]">
+        <div data-be="copy" className="mx-auto max-w-2xl text-center">
+          <span className="rb-chip">Chapter seven</span>
+          <h2 className="mt-4 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold leading-[0.9] tracking-tight text-[var(--band-ink)]">
             Belinha
           </h2>
-          <RainbowArc variant="stripe" className="mx-auto max-w-[8rem]" />
-          <p className="text-[var(--text-body-lg)] text-[var(--text-secondary)] leading-relaxed">
-            Real life. Creative interpretation. Character. Every dog photo here is Belinha —
-            no others.
+          <p className="mt-4 text-[var(--text-body-lg)] leading-relaxed text-[var(--text-secondary)]">
+            Best friend and muse. Real life on one side, her character on the other —
+            and every dog picture on this site is hers.
           </p>
         </div>
 
-        {/* Real ↔ Character bridge */}
-        <div className="grid md:grid-cols-[1fr_auto_1fr] gap-6 md:gap-8 items-center max-w-5xl mx-auto">
+        {/* Real ↔ character bridge */}
+        <div
+          data-be="bridge"
+          className="mx-auto mt-14 grid max-w-5xl items-center gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-4"
+        >
           <figure
             data-be="real"
-            className="relative overflow-hidden rounded-[1.75rem] shadow-floating aspect-square"
+            className="relative aspect-square overflow-hidden rounded-[1.75rem]"
+            style={{ boxShadow: '14px 14px 0 0 var(--rb-red)' }}
           >
             <img
               src={ASSETS.belinha.starHat}
               alt="The real Belinha wearing a star hat"
               className="h-full w-full object-cover"
               loading="lazy"
-              width={700}
-              height={700}
+              width={800}
+              height={800}
             />
-            <figcaption className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-slate-950/70 to-transparent">
-              <span className="text-white text-sm font-bold">Real Belinha</span>
+            <figcaption className="absolute inset-x-0 bottom-0 bg-[oklch(21%_0.03_300_/_0.72)] p-4 text-sm font-extrabold uppercase tracking-wider text-white">
+              Real Belinha
             </figcaption>
           </figure>
 
-          <div className="flex md:flex-col items-center justify-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-wider py-2">
-            <span className="hidden md:block w-px h-8 bg-amber-300" aria-hidden />
-            <span>→</span>
-            <span className="text-center leading-tight">Into the<br className="hidden md:block" /> world</span>
-            <span>→</span>
-            <span className="hidden md:block w-px h-8 bg-amber-300" aria-hidden />
+          <div className="flex items-center justify-center md:flex-col md:gap-3">
+            <div
+              data-be="link"
+              className="h-2 w-24 origin-left rounded-full md:h-24 md:w-2"
+              style={{ background: 'var(--gradient-rainbow)' }}
+              aria-hidden
+            />
+            <ArrowRight className="mx-3 h-6 w-6 text-[var(--band-ink)] md:rotate-90" aria-hidden />
           </div>
 
           <div
             data-be="art"
-            className="relative flex flex-col items-center justify-center rounded-[1.75rem] bg-white shadow-floating aspect-square border border-amber-100 p-8"
+            className="relative flex aspect-square flex-col items-center justify-center rounded-[1.75rem] bg-white p-8"
+            style={{ boxShadow: '14px 14px 0 0 var(--rb-blue)' }}
           >
-            <DogFriend className="w-[70%] max-w-[220px] h-auto drop-shadow-md" />
-            <p className="mt-4 text-sm font-bold text-amber-800">Creative Belinha</p>
-            <p className="text-xs text-slate-500 text-center mt-1 max-w-[200px]">
-              Illustrated character from the Spread Love universe
+            <DogFriend className="h-auto w-[70%] max-w-[240px]" />
+            <p className="mt-5 font-display text-lg font-extrabold text-[var(--text-primary)]">
+              Belinha, the character
+            </p>
+            <p className="mt-1 max-w-[220px] text-center text-xs text-[var(--text-muted)]">
+              Her illustrated form inside the Spread Love world
             </p>
           </div>
         </div>
 
-        {/* Photo strip — curated moments */}
-        <div data-be="strip" className="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        {/* Curated moments — each with its own hue block */}
+        <div data-be="strip" className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {strip.map((shot) => (
-            <img
+            <figure
               key={shot.src}
-              src={shot.src}
-              alt={shot.alt}
-              className="aspect-square w-full object-cover rounded-2xl shadow-card"
-              loading="lazy"
-              width={400}
-              height={400}
-            />
+              data-be="shot"
+              className="overflow-hidden rounded-2xl"
+              style={{ boxShadow: `8px 8px 0 0 ${shot.hue}` }}
+            >
+              <img
+                src={shot.src}
+                alt={shot.alt}
+                className="aspect-square w-full object-cover"
+                loading="lazy"
+                width={440}
+                height={440}
+              />
+            </figure>
           ))}
         </div>
       </div>

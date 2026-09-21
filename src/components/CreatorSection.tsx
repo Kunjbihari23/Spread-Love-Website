@@ -2,29 +2,44 @@ import React, { useRef } from 'react';
 import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { ASSETS } from '../data/clientAssets';
 import { DollFriend } from './odyssey/OdysseyArt';
-import { RainbowArc } from './ui/RainbowArc';
 
-/** Editorial: creator photograph + characters visually interacting */
+/** Chapter 02 — the creator, with her characters crowding into frame. */
 export const CreatorSection: React.FC = () => {
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
       const mm = whenMotionOk(() => {
-        scrollReveal('[data-cr="portrait"]', { x: -30 }, {
+        scrollReveal('[data-cr="portrait"]', { x: -34, rotate: -3 }, {
           trigger: ref.current,
-          duration: 0.55,
+          duration: 0.6,
         });
-        scrollReveal('[data-cr="float"]', { y: 28, scale: 0.9 }, {
-          trigger: ref.current,
-          stagger: 0.12,
-          duration: 0.5,
-          ease: 'back.out(1.5)',
-        });
-        scrollReveal('[data-cr="copy"] > *', { y: 16 }, {
+        scrollReveal('[data-cr="copy"] > *', { y: 18 }, {
           trigger: ref.current,
           stagger: 0.07,
-          duration: 0.4,
+          duration: 0.42,
+        });
+        scrollReveal('[data-cr="float"]', { y: 30, scale: 0.86, rotate: 8 }, {
+          trigger: ref.current,
+          stagger: 0.13,
+          duration: 0.55,
+          ease: 'back.out(1.7)',
+        });
+        scrollReveal('[data-cr="strip"] figure', { y: 26 }, {
+          trigger: '[data-cr="strip"]',
+          stagger: 0.1,
+          duration: 0.45,
+        });
+
+        gsap.to('[data-cr="float"]', {
+          y: -10,
+          rotate: 2,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          stagger: 0.4,
+          delay: 1,
         });
       });
       return () => mm.revert();
@@ -36,19 +51,22 @@ export const CreatorSection: React.FC = () => {
     <section
       ref={ref}
       id="creator"
-      className="relative overflow-hidden py-[var(--section-py-lg)] bg-white"
+      className="rb-band--violet relative overflow-hidden bg-white py-[var(--section-py-lg)]"
     >
-      <div className="absolute top-0 right-0 w-[40%] h-full opacity-40 pointer-events-none hidden lg:block"
-        style={{ background: 'var(--gradient-rainbow-soft)' }}
+      {/* Solid color slab behind the portrait — no blurry orbs */}
+      <div
+        className="absolute inset-y-0 left-0 hidden w-[38%] lg:block"
+        style={{ background: 'var(--band)' }}
+        aria-hidden
       />
 
       <div className="sl-container relative z-10">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          {/* Large portrait with overlapping character art */}
-          <div className="lg:col-span-7 relative">
+        <div className="grid items-center gap-12 lg:grid-cols-12">
+          <div className="relative lg:col-span-6">
             <div
               data-cr="portrait"
-              className="relative aspect-[4/5] sm:aspect-[5/4] max-h-[560px] mx-auto lg:mx-0 overflow-hidden rounded-[2rem] shadow-floating"
+              className="relative mx-auto aspect-[4/5] max-h-[600px] overflow-hidden rounded-[2rem] lg:mx-0"
+              style={{ boxShadow: '16px 16px 0 0 var(--rb-yellow)' }}
             >
               <img
                 src={ASSETS.creator.portrait}
@@ -56,18 +74,18 @@ export const CreatorSection: React.FC = () => {
                 className="h-full w-full object-cover object-top"
                 loading="lazy"
                 width={900}
-                height={1100}
+                height={1125}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
-              <p className="absolute bottom-5 left-5 right-5 text-white font-display text-xl sm:text-2xl font-bold">
+              <p className="absolute bottom-0 left-0 right-0 bg-[oklch(21%_0.03_300_/_0.75)] p-5 font-display text-2xl font-extrabold text-white">
                 Sheila Rocha
               </p>
             </div>
 
-            {/* Floating Little Sheila */}
+            {/* Little Sheila artwork peeking in */}
             <div
               data-cr="float"
-              className="absolute -bottom-4 -left-2 sm:left-4 w-28 sm:w-36 rounded-2xl overflow-hidden border-4 border-white shadow-elevated bg-white"
+              className="absolute -bottom-6 left-0 w-28 overflow-hidden rounded-2xl bg-white sm:w-36"
+              style={{ boxShadow: '8px 8px 0 0 var(--rb-green)' }}
             >
               <img
                 src={ASSETS.characters.littleSheila}
@@ -75,48 +93,48 @@ export const CreatorSection: React.FC = () => {
                 className="aspect-square w-full object-cover"
                 loading="lazy"
               />
-              <span className="block px-2 py-1.5 text-center text-[10px] font-bold uppercase tracking-wide text-emerald-700 bg-emerald-50">
+              <span className="block bg-[var(--rb-green)] px-2 py-1.5 text-center text-[10px] font-extrabold uppercase tracking-wide text-white">
                 Little Sheila
               </span>
             </div>
 
-            {/* Floating doll SVG */}
+            {/* Spread Love Doll */}
             <div
               data-cr="float"
-              className="absolute top-6 -right-2 sm:right-2 w-24 sm:w-28 rounded-2xl bg-white/95 border-4 border-white shadow-elevated p-2"
+              className="absolute -top-4 right-0 w-24 rounded-2xl bg-white p-2 sm:w-32"
+              style={{ boxShadow: '8px 8px 0 0 var(--rb-pink)' }}
             >
-              <DollFriend className="w-full h-auto" />
-              <span className="block text-center text-[10px] font-bold uppercase tracking-wide text-pink-600 mt-1">
+              <DollFriend className="h-auto w-full" />
+              <span className="mt-1 block text-center text-[10px] font-extrabold uppercase tracking-wide text-[var(--rb-pink-ink)]">
                 Spread Love Doll
               </span>
             </div>
           </div>
 
-          <div data-cr="copy" className="lg:col-span-5 space-y-5 text-center lg:text-left">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--love-pink)]">
-              The creator
-            </p>
-            <h2 className="font-display text-[var(--text-heading-xl)] font-extrabold text-[var(--text-primary)] leading-[1.15]">
-              Her World of Characters
+          <div data-cr="copy" className="lg:col-span-6 lg:pl-6">
+            <span className="rb-chip">Chapter two</span>
+            <h2 className="mt-4 font-display text-[clamp(2.25rem,6vw,4rem)] font-extrabold leading-[1.02] tracking-tight text-[var(--text-primary)]">
+              Her world of{' '}
+              <span className="rb-underline">characters</span>
             </h2>
-            <RainbowArc variant="stripe" className="mx-auto lg:mx-0 max-w-[9rem]" />
-            <p className="text-[var(--text-body-lg)] text-[var(--text-secondary)] leading-relaxed">
-              Behind every doll, story, and colorful adventure is Sheila — and the characters
-              who grew with her over ten years of creating with love.
+            <p className="mt-5 max-w-lg text-[var(--text-body-lg)] leading-relaxed text-[var(--text-secondary)]">
+              Behind every doll, drawing, and colorful story is Sheila — and the characters
+              that grew alongside her over ten years.
             </p>
-            <p className="text-sm text-[var(--text-muted)] leading-relaxed">
-              Replaceable placeholder — final bio and character notes coming from the client.
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-[var(--text-muted)]">
+              Placeholder text. Final bio and character notes coming from the client.
             </p>
-            <div className="flex flex-wrap justify-center lg:justify-start gap-3 pt-2">
+
+            <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#characters"
-                className="inline-flex min-h-11 items-center rounded-full border border-pink-200 bg-pink-50 px-5 text-sm font-bold text-pink-700 hover:bg-pink-100 transition-colors cursor-pointer"
+                className="inline-flex min-h-12 items-center rounded-full bg-[var(--band)] px-6 text-sm font-extrabold text-white transition-transform hover:scale-[1.03] cursor-pointer"
               >
                 Meet the characters
               </a>
               <a
                 href="#belinha"
-                className="inline-flex min-h-11 items-center rounded-full border border-amber-200 bg-amber-50 px-5 text-sm font-bold text-amber-800 hover:bg-amber-100 transition-colors cursor-pointer"
+                className="inline-flex min-h-12 items-center rounded-full border-2 border-[var(--text-primary)] px-6 text-sm font-extrabold text-[var(--text-primary)] transition-colors hover:bg-[var(--text-primary)] hover:text-white cursor-pointer"
               >
                 Meet Belinha
               </a>
@@ -124,21 +142,27 @@ export const CreatorSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Secondary beach moment */}
-        <div className="mt-16 grid sm:grid-cols-2 gap-4 sm:gap-6">
-          <figure className="relative overflow-hidden rounded-[1.5rem] aspect-[16/10] shadow-card">
+        {/* Two beach moments, color-blocked */}
+        <div data-cr="strip" className="mt-16 grid gap-5 sm:grid-cols-2">
+          <figure
+            className="overflow-hidden rounded-[1.5rem]"
+            style={{ boxShadow: '10px 10px 0 0 var(--rb-teal)' }}
+          >
             <img
               src={ASSETS.creator.sandHeart}
-              alt="Sheila and Belinha with a heart in the sand"
-              className="h-full w-full object-cover"
+              alt="Sheila and Belinha with a heart drawn in the sand"
+              className="aspect-16/10 w-full object-cover"
               loading="lazy"
             />
           </figure>
-          <figure className="relative overflow-hidden rounded-[1.5rem] aspect-[16/10] shadow-card">
+          <figure
+            className="overflow-hidden rounded-[1.5rem]"
+            style={{ boxShadow: '10px 10px 0 0 var(--rb-orange)' }}
+          >
             <img
               src={ASSETS.creator.sunset}
               alt="Sheila and Belinha at sunset"
-              className="h-full w-full object-cover"
+              className="aspect-16/10 w-full object-cover"
               loading="lazy"
             />
           </figure>

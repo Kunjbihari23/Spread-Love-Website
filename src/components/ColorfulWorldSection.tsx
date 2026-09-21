@@ -1,9 +1,19 @@
 import React, { useRef } from 'react';
 import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { ASSETS } from '../data/clientAssets';
-import { RainbowArc } from './ui/RainbowArc';
 
-/** Balloons / sweets / rainbow celebration moment */
+const SWATCHES = [
+  { hue: 'var(--rb-red)', label: 'Red' },
+  { hue: 'var(--rb-orange)', label: 'Orange' },
+  { hue: 'var(--rb-yellow)', label: 'Yellow' },
+  { hue: 'var(--rb-green)', label: 'Green' },
+  { hue: 'var(--rb-teal)', label: 'Teal' },
+  { hue: 'var(--rb-blue)', label: 'Blue' },
+  { hue: 'var(--rb-violet)', label: 'Violet' },
+  { hue: 'var(--rb-pink)', label: 'Pink' },
+];
+
+/** Chapter 04 — the palette itself, as a wall of color against one photo. */
 export const ColorfulWorldSection: React.FC = () => {
   const ref = useRef<HTMLElement>(null);
 
@@ -13,20 +23,31 @@ export const ColorfulWorldSection: React.FC = () => {
         scrollReveal('[data-cw="copy"] > *', { y: 20 }, {
           trigger: ref.current,
           stagger: 0.08,
-          duration: 0.4,
-        });
-        scrollReveal('[data-cw="hero-img"]', { scale: 0.96 }, {
-          trigger: ref.current,
-          duration: 0.55,
+          duration: 0.42,
         });
 
-        gsap.to('[data-cw="float"]', {
-          y: -14,
-          duration: 2.8,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          stagger: { each: 0.35, from: 'random' },
+        scrollReveal('[data-cw="swatch"]', { scaleY: 0 }, {
+          trigger: '[data-cw="wall"]',
+          stagger: 0.06,
+          duration: 0.5,
+          ease: 'power3.out',
+        });
+
+        scrollReveal('[data-cw="photo"]', { scale: 0.92 }, {
+          trigger: '[data-cw="photo"]',
+          duration: 0.6,
+        });
+
+        // Parallax drift on the photo
+        gsap.to('[data-cw="photo"] img', {
+          yPercent: -8,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
         });
       });
       return () => mm.revert();
@@ -38,47 +59,47 @@ export const ColorfulWorldSection: React.FC = () => {
     <section
       ref={ref}
       id="colorful-world"
-      className="relative overflow-hidden py-[var(--section-py-lg)]"
-      style={{ background: 'linear-gradient(180deg, #ffffff 0%, #fff7ed 40%, #fdf2f8 100%)' }}
+      className="rb-band--yellow relative overflow-hidden bg-[oklch(21%_0.03_300)] py-[var(--section-py-lg)] text-white"
     >
-      {/* Soft floating color orbs */}
-      <div data-cw="float" className="absolute top-16 left-[8%] w-16 h-16 rounded-full bg-pink-400/30 blur-sm pointer-events-none" aria-hidden />
-      <div data-cw="float" className="absolute top-32 right-[12%] w-12 h-12 rounded-full bg-sky-400/35 blur-sm pointer-events-none" aria-hidden />
-      <div data-cw="float" className="absolute bottom-24 left-[18%] w-10 h-10 rounded-full bg-amber-400/40 blur-sm pointer-events-none" aria-hidden />
-      <div data-cw="float" className="absolute bottom-40 right-[22%] w-14 h-14 rounded-full bg-violet-400/30 blur-sm pointer-events-none" aria-hidden />
-
-      <div className="sl-container relative z-10">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div data-cw="copy" className="space-y-5 text-center lg:text-left order-2 lg:order-1">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--love-pink)]">
-              Her colorful world
-            </p>
-            <h2 className="font-display text-[var(--text-heading-xl)] font-extrabold text-[var(--text-primary)] leading-[1.15]">
-              Sweets, Rainbows &amp; Play
-            </h2>
-            <RainbowArc variant="stripe" className="mx-auto lg:mx-0 max-w-[10rem]" />
-            <p className="text-[var(--text-body-lg)] text-[var(--text-secondary)] leading-relaxed max-w-md mx-auto lg:mx-0">
-              Bright toys, candy colors, and rainbow energy — the playful visual spirit that
-              runs through every Spread Love creation.
-            </p>
-          </div>
-
-          <div data-cw="hero-img" className="order-1 lg:order-2 relative">
-            <div className="relative overflow-hidden rounded-[2rem] shadow-floating aspect-[4/3]">
-              <img
-                src={ASSETS.colorful.rainbowSweets}
-                alt="Colorful rainbow sweets and toys display"
-                className="h-full w-full object-cover"
-                loading="lazy"
-                width={900}
-                height={675}
-              />
-            </div>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[70%]">
-              <RainbowArc className="w-full h-auto drop-shadow-sm" />
-            </div>
-          </div>
+      <div className="sl-container">
+        <div data-cw="copy" className="max-w-3xl">
+          <span className="rb-chip" style={{ color: '#241a00' }}>Chapter four</span>
+          <h2 className="mt-4 font-display text-[clamp(2.5rem,8vw,5.5rem)] font-extrabold leading-[0.95] tracking-tight">
+            Strong colors,<br />
+            <span className="rb-text-spectrum">on purpose</span>
+          </h2>
+          <p className="mt-5 max-w-xl text-[var(--text-body-lg)] leading-relaxed text-white/75">
+            Sweets, toys, rainbows — the palette comes straight out of Sheila's own
+            pictures. Eight hues carry the whole site.
+          </p>
         </div>
+
+        {/* Color wall */}
+        <div data-cw="wall" className="mt-12 grid grid-cols-4 gap-2 sm:grid-cols-8 sm:gap-3">
+          {SWATCHES.map((s) => (
+            <div key={s.label} data-cw="swatch" className="origin-bottom">
+              <div className="h-28 rounded-xl sm:h-40" style={{ background: s.hue }} />
+              <p className="mt-2 text-[11px] font-extrabold uppercase tracking-wider text-white/60">
+                {s.label}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* The source photograph */}
+        <figure data-cw="photo" className="mt-14 overflow-hidden rounded-[2rem]">
+          <img
+            src={ASSETS.colorful.rainbowSweets}
+            alt="Colorful rainbow sweets and toys from Sheila's photographs"
+            className="aspect-16/9 w-full scale-110 object-cover"
+            loading="lazy"
+            width={1400}
+            height={790}
+          />
+          <figcaption className="bg-white/5 px-5 py-4 text-sm text-white/60">
+            Client photograph — the palette's origin.
+          </figcaption>
+        </figure>
       </div>
     </section>
   );

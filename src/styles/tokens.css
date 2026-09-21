@@ -7,44 +7,85 @@
   /* ────────────────────────────────────────────────────────
      COLORS — Brand
      ──────────────────────────────────────────────────────── */
-  --love-pink:        #db2777;
-  --love-pink-light:  #fbcfe8;
-  --love-pink-soft:   #fdf2f8;
-  --love-coral:       #f43f5e;
-  --love-rose:        #e11d48;
-  --love-purple:      #7c3aed;
-  --love-purple-soft: #ede9fe;
-  --love-blue:        #38b6ff;
-  --love-blue-soft:   #e0f2fe;
-  --love-mint:        #2fd197;
-  --love-mint-soft:   #ecfdf5;
-  --love-gold:        #f59e0b;
-  --love-gold-soft:   #fffbeb;
-  --love-amber:       #d97706;
+  /* Brand hues sit ON the rainbow spectrum — strong, printed-ink saturation.
+     Names kept stable so existing components pick the new values up. */
+  --love-pink:        oklch(56% 0.238 350);  /* primary — hot magenta-pink */
+  --love-pink-light:  oklch(84% 0.120 350);
+  --love-pink-soft:   oklch(96% 0.040 350);
+  --love-coral:       oklch(62% 0.225 18);   /* strong red-coral */
+  --love-rose:        oklch(55% 0.235 12);
+  --love-purple:      oklch(52% 0.245 305);  /* electric violet */
+  --love-purple-soft: oklch(96% 0.038 305);
+  --love-blue:        oklch(58% 0.205 250);  /* true rainbow blue */
+  --love-blue-soft:   oklch(96% 0.036 250);
+  --love-mint:        oklch(63% 0.180 152);  /* rainbow green */
+  --love-mint-soft:   oklch(96% 0.045 152);
+  --love-gold:        oklch(80% 0.175 85);   /* saturated yellow */
+  --love-gold-soft:   oklch(97% 0.055 95);
+  --love-amber:       oklch(67% 0.190 55);   /* orange */
 
-  /* Rainbow motif — accents, not full-page wash */
-  --rainbow-red:        #ef4444;
-  --rainbow-orange:     #f97316;
-  --rainbow-yellow:     #eab308;
-  --rainbow-green:      #22c55e;
-  --rainbow-blue:       #3b82f6;
-  --rainbow-indigo:     #6366f1;
-  --rainbow-violet:     #a855f7;
-  --gradient-rainbow:   linear-gradient(90deg,
-                          var(--rainbow-red) 0%,
-                          var(--rainbow-orange) 16%,
-                          var(--rainbow-yellow) 33%,
-                          var(--rainbow-green) 50%,
-                          var(--rainbow-blue) 66%,
-                          var(--rainbow-indigo) 83%,
-                          var(--rainbow-violet) 100%);
+  /* ────────────────────────────────────────────────────────
+     RAINBOW SPECTRUM — the brand's primary color system.
+     Strong, saturated OKLCH. Each section owns one hue band.
+     ──────────────────────────────────────────────────────── */
+  --rb-red:        oklch(58% 0.225 25);
+  --rb-orange:     oklch(66% 0.195 46);
+  --rb-yellow:     oklch(79% 0.170 85);
+  --rb-green:      oklch(62% 0.175 148);
+  --rb-teal:       oklch(64% 0.135 196);
+  --rb-blue:       oklch(56% 0.205 258);
+  --rb-violet:     oklch(54% 0.230 305);
+  --rb-pink:       oklch(60% 0.235 350);
+
+  /* Deep ink versions — accessible text on light paper (≥4.5:1) */
+  --rb-red-ink:    oklch(45% 0.195 25);
+  --rb-orange-ink: oklch(47% 0.155 46);
+  --rb-yellow-ink: oklch(45% 0.125 78);
+  --rb-green-ink:  oklch(43% 0.135 150);
+  --rb-teal-ink:   oklch(44% 0.110 210);
+  --rb-blue-ink:   oklch(44% 0.185 260);
+  --rb-violet-ink: oklch(44% 0.195 305);
+  --rb-pink-ink:   oklch(46% 0.200 352);
+
+  /* Tinted papers — saturated enough to read as color, light enough for ink */
+  --rb-red-paper:    oklch(96% 0.035 25);
+  --rb-orange-paper: oklch(96% 0.045 60);
+  --rb-yellow-paper: oklch(97% 0.055 95);
+  --rb-green-paper:  oklch(96% 0.045 150);
+  --rb-teal-paper:   oklch(96% 0.040 200);
+  --rb-blue-paper:   oklch(96% 0.035 258);
+  --rb-violet-paper: oklch(96% 0.038 305);
+  --rb-pink-paper:   oklch(96% 0.040 350);
+
+  /* Full spectrum sweep */
+  --gradient-rainbow: linear-gradient(90deg,
+                        var(--rb-red) 0%,
+                        var(--rb-orange) 15%,
+                        var(--rb-yellow) 30%,
+                        var(--rb-green) 45%,
+                        var(--rb-teal) 60%,
+                        var(--rb-blue) 74%,
+                        var(--rb-violet) 87%,
+                        var(--rb-pink) 100%);
+  --gradient-rainbow-diagonal: linear-gradient(135deg,
+                        var(--rb-red) 0%,
+                        var(--rb-orange) 18%,
+                        var(--rb-yellow) 34%,
+                        var(--rb-green) 50%,
+                        var(--rb-blue) 72%,
+                        var(--rb-violet) 88%,
+                        var(--rb-pink) 100%);
   --gradient-rainbow-soft: linear-gradient(135deg,
-                          rgba(239,68,68,0.12) 0%,
-                          rgba(249,115,22,0.1) 20%,
-                          rgba(234,179,8,0.1) 40%,
-                          rgba(34,197,94,0.1) 60%,
-                          rgba(59,130,246,0.1) 80%,
-                          rgba(168,85,247,0.12) 100%);
+                        oklch(58% 0.225 25 / 0.18) 0%,
+                        oklch(79% 0.170 85 / 0.16) 30%,
+                        oklch(62% 0.175 148 / 0.16) 50%,
+                        oklch(56% 0.205 258 / 0.16) 75%,
+                        oklch(54% 0.230 305 / 0.18) 100%);
+
+  /* Per-section hue slot — components read these, sections set them */
+  --band:        var(--rb-pink);
+  --band-ink:    var(--rb-pink-ink);
+  --band-paper:  var(--rb-pink-paper);
 
   /* Gradient presets */
   --gradient-brand:     linear-gradient(135deg, var(--love-pink) 0%, var(--love-coral) 40%, var(--love-gold) 100%);
