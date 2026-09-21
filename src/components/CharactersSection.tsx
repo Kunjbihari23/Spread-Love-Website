@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Heart, Sparkles, Star, Volume2, ArrowRight } from 'lucide-react';
 import { gsap, useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { CHARACTERS_DATA } from '../data/mockData';
+import { ASSETS } from '../data/clientAssets';
 import { Character } from '../types';
 import { SectionHeader } from './ui/SectionHeader';
 import { Card } from './ui/Card';
@@ -79,11 +80,47 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div data-ch="header">
           <SectionHeader
-            badge="Beloved Companions & Magical Friends"
+            badge="Meet the Characters"
             badgeIcon={<Heart className="w-3.5 h-3.5 fill-pink-500 text-pink-500" />}
-            title="Characters & Handcrafted Dolls"
-            subtitle="Every character began as an emotional sketch meant to comfort a child in need. Discover their backstories, iconic items, and friendship badges."
+            title="The Character Universe"
+            subtitle="Little Sheila, Belinha, Spread Love Doll, and friends — a creative world built from real artwork and real love. More character art landing as the client shares it."
           />
+        </div>
+
+        {/* Group composition — THE WORLD */}
+        <div className="relative mb-14 sm:mb-16 rounded-[2rem] overflow-hidden border border-pink-100 bg-gradient-to-br from-pink-50 via-amber-50/50 to-sky-50 p-6 sm:p-10">
+          <div className="absolute inset-0 opacity-50 pointer-events-none" style={{ background: 'var(--gradient-rainbow-soft)' }} />
+          <div className="relative z-10 grid sm:grid-cols-[1.2fr_0.8fr] gap-6 items-center">
+            <div className="flex flex-wrap justify-center sm:justify-start items-end gap-3 sm:gap-4">
+              <img
+                src={ASSETS.characters.littleSheila}
+                alt="Little Sheila"
+                className="w-[38%] sm:w-[30%] max-w-[160px] rounded-2xl shadow-elevated border-4 border-white object-cover aspect-square -rotate-3"
+                loading="lazy"
+              />
+              <img
+                src={ASSETS.belinha.starHat}
+                alt="Belinha"
+                className="w-[48%] sm:w-[38%] max-w-[200px] rounded-2xl shadow-floating border-4 border-white object-cover aspect-square z-10"
+                loading="lazy"
+              />
+              <img
+                src={ASSETS.colorful.rainbowSweets}
+                alt="Colorful Spread Love world"
+                className="w-[38%] sm:w-[30%] max-w-[160px] rounded-2xl shadow-elevated border-4 border-white object-cover aspect-square rotate-3"
+                loading="lazy"
+              />
+            </div>
+            <div className="text-center sm:text-left space-y-3">
+              <h3 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900">
+                The World
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Characters together — artwork, Belinha, and playful color in one universe.
+                Tap any friend below for their story card.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* SPECIAL EMPHASIS HERO ROW */}

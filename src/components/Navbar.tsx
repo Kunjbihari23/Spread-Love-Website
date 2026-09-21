@@ -8,12 +8,9 @@ import {
   ExternalLink,
   ArrowRight,
   Compass,
-  Layers,
   Users,
   Image,
   Film,
-  PartyPopper,
-  Share2,
   Youtube,
   Instagram,
   Facebook,
@@ -35,16 +32,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [activeSection, setActiveSection] = useState<string>('hero');
   const headerRef = useRef<HTMLElement>(null);
 
-  // Primary desktop nav items
+  // Primary desktop nav — matches homepage story flow
   const navItems = [
     { id: 'hero', name: 'Home', href: '#hero', icon: Heart },
-    { id: 'timeline', name: '10 Years', href: '#timeline', icon: Compass },
+    { id: 'creator', name: 'Creator', href: '#creator', icon: Users },
     { id: 'love-world', name: 'LOVE WORLD', href: '#love-world', icon: Sparkles, highlight: true },
-    { id: 'projects', name: 'My Work', href: '#projects', icon: Layers },
+    { id: 'timeline', name: '10 Years', href: '#timeline', icon: Compass },
+    { id: 'belinha', name: 'Belinha', href: '#belinha', icon: Heart },
     { id: 'characters', name: 'Characters', href: '#characters', icon: Users },
     { id: 'gallery', name: 'Gallery', href: '#gallery', icon: Image },
     { id: 'videos', name: 'Videos', href: '#videos', icon: Film },
-    { id: 'celebration', name: 'Celebration', href: '#celebration', icon: PartyPopper },
   ];
 
   // GSAP Header reveal on load
@@ -65,10 +62,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       const sections = [
         'hero',
-        'timeline',
+        'intro',
+        'creator',
+        'colorful-world',
         'love-world',
-        'projects',
+        'timeline',
+        'belinha',
         'characters',
+        'projects',
         'gallery',
         'videos',
         'celebration',

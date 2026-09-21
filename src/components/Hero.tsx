@@ -1,366 +1,224 @@
-import React, { useRef } from 'react';
-import { Heart, Sparkles, Play, ArrowRight, Star, Compass, Smile } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Play, Pause, Volume2, VolumeX, ArrowDown, Sparkles } from 'lucide-react';
 import { gsap, useGSAP, whenMotionOk } from '../lib/motion';
-import { HERO_DATA, CHARACTERS_DATA, PROJECTS_DATA } from '../data/mockData';
-import { Character } from '../types';
+import { HERO_DATA } from '../data/mockData';
+import { ASSETS } from '../data/clientAssets';
 import { Button } from './ui/Button';
+import { RainbowArc } from './ui/RainbowArc';
 
 interface HeroProps {
   onOpenVideo: () => void;
-  onSelectCharacter: (char: Character) => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenVideo, onSelectCharacter }) => {
-  const primaryCharacters = CHARACTERS_DATA.slice(0, 3); // Spread Love Doll, Belinha, Little Sheila
-  const heroArtwork =
-    PROJECTS_DATA[0]?.coverImage ||
-    'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80';
+/**
+ * Cinematic LOVE WORLD video hero.
+ * Drop final mp4 at ASSETS.hero.video — poster + fallback already wired.
+ */
+export const Hero: React.FC<HeroProps> = ({ onOpenVideo }) => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
 
-  const heroSectionRef = useRef<HTMLElement>(null);
-  const dollBadgeRef = useRef<HTMLButtonElement>(null);
-  const belinhaBadgeRef = useRef<HTMLButtonElement>(null);
-  const floatingHeartRef = useRef<HTMLDivElement>(null);
-  const floatingStarRef = useRef<HTMLDivElement>(null);
-  const floatingSmileRef = useRef<HTMLDivElement>(null);
+  const prefersReduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Love-bloom entrance + gentle float loops
   useGSAP(
     () => {
       const mm = whenMotionOk(() => {
-        const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.4 } });
-
-        tl.fromTo(
-          '[data-hero="badge"]',
-          { autoAlpha: 0, y: -16 },
-          { autoAlpha: 1, y: 0, duration: 0.35, ease: 'back.out(1.6)' }
-        )
+        gsap
+          .timeline({ defaults: { ease: 'power2.out' } })
+          .fromTo('[data-vh="overlay"]', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 })
           .fromTo(
-            '[data-hero="headline"]',
-            { autoAlpha: 0, y: 24 },
-            { autoAlpha: 1, y: 0 },
+            '[data-vh="brand"]',
+            { autoAlpha: 0, y: 18 },
+            { autoAlpha: 1, y: 0, duration: 0.45 },
             '-=0.15'
           )
           .fromTo(
-            '[data-hero="sub"]',
-            { autoAlpha: 0, y: 14 },
-            { autoAlpha: 1, y: 0, duration: 0.35 },
+            '[data-vh="line"]',
+            { autoAlpha: 0, y: 12 },
+            { autoAlpha: 1, y: 0, duration: 0.4 },
             '-=0.2'
           )
           .fromTo(
-            '[data-hero="cta"]',
-            { autoAlpha: 0, y: 16 },
+            '[data-vh="cta"]',
+            { autoAlpha: 0, y: 10 },
             { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.35 },
             '-=0.15'
-          )
-          .fromTo(
-            '[data-hero="companions"]',
-            { autoAlpha: 0, y: 12 },
-            { autoAlpha: 1, y: 0, duration: 0.35 },
-            '-=0.12'
-          )
-          .fromTo(
-            '[data-hero="artwork"]',
-            { autoAlpha: 0, scale: 0.94, rotation: 4 },
-            { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45 },
-            '-=0.35'
-          )
-          .fromTo(
-            [dollBadgeRef.current, belinhaBadgeRef.current].filter(Boolean),
-            { autoAlpha: 0, scale: 0.6 },
-            { autoAlpha: 1, scale: 1, stagger: 0.08, duration: 0.4, ease: 'back.out(2)' },
-            '-=0.25'
           );
-
-        if (dollBadgeRef.current) {
-          gsap.to(dollBadgeRef.current, {
-            y: -10,
-            rotation: 2,
-            duration: 2.8,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-            delay: 0.6,
-          });
-        }
-        if (belinhaBadgeRef.current) {
-          gsap.to(belinhaBadgeRef.current, {
-            y: 8,
-            rotation: -2,
-            duration: 3.2,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-            delay: 0.7,
-          });
-        }
-        if (floatingHeartRef.current) {
-          gsap.to(floatingHeartRef.current, {
-            y: -18,
-            x: 10,
-            rotation: 12,
-            duration: 4,
-            repeat: -1,
-            yoyo: true,
-            ease: 'power1.inOut',
-            delay: 0.6,
-          });
-        }
-        if (floatingStarRef.current) {
-          gsap.to(floatingStarRef.current, {
-            y: 20,
-            rotation: 360,
-            duration: 12,
-            repeat: -1,
-            ease: 'none',
-            delay: 0.6,
-          });
-        }
-        if (floatingSmileRef.current) {
-          gsap.to(floatingSmileRef.current, {
-            y: -14,
-            rotation: -8,
-            duration: 3.5,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-            delay: 0.6,
-          });
-        }
       });
       return () => mm.revert();
     },
-    { scope: heroSectionRef }
+    { scope: sectionRef }
   );
 
-  const handleCharacterHover = (el: HTMLElement | null) => {
-    if (!el) return;
-    gsap.to(el, {
-      scale: 1.08,
-      rotation: '+=4',
-      duration: 0.25,
-      yoyo: true,
-      repeat: 1,
-      ease: 'back.out(2)',
-    });
+  const tryAutoplay = useCallback(async () => {
+    const v = videoRef.current;
+    if (!v || prefersReduced || videoFailed) return;
+    try {
+      v.muted = true;
+      setMuted(true);
+      await v.play();
+      setPlaying(true);
+    } catch {
+      setPlaying(false);
+    }
+  }, [prefersReduced, videoFailed]);
+
+  useEffect(() => {
+    if (videoReady && !prefersReduced) {
+      void tryAutoplay();
+    }
+  }, [videoReady, prefersReduced, tryAutoplay]);
+
+  const togglePlay = async () => {
+    const v = videoRef.current;
+    if (!v || videoFailed) {
+      onOpenVideo();
+      return;
+    }
+    if (v.paused) {
+      try {
+        await v.play();
+        setPlaying(true);
+      } catch {
+        onOpenVideo();
+      }
+    } else {
+      v.pause();
+      setPlaying(false);
+    }
+  };
+
+  const toggleMute = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setMuted(v.muted);
+  };
+
+  const scrollNext = () => {
+    document.getElementById('intro')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <section
-      ref={heroSectionRef}
+      ref={sectionRef}
       id="hero"
-      className="relative min-h-[92vh] pt-24 sm:pt-28 pb-14 sm:pb-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-rose-50/70 via-amber-50/40 to-white"
+      className="relative min-h-dvh w-full overflow-hidden bg-slate-950 text-white"
     >
-      {/* Background Orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-pink-300/25 blur-3xl" />
-        <div className="absolute top-1/3 -right-24 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-amber-300/25 blur-3xl" />
-        <div className="absolute -bottom-24 left-1/3 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-sky-300/25 blur-3xl" />
+      {/* Full-bleed media plane */}
+      <div className="absolute inset-0">
+        {!videoFailed && (
+          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full object-cover"
+            poster={ASSETS.hero.poster}
+            playsInline
+            loop
+            muted={muted}
+            preload="metadata"
+            onLoadedData={() => setVideoReady(true)}
+            onError={() => setVideoFailed(true)}
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
+            aria-label="LOVE WORLD logo video"
+          >
+            <source src={ASSETS.hero.video} type="video/mp4" />
+          </video>
+        )}
 
-        <div ref={floatingHeartRef} className="absolute top-32 left-[8%] text-pink-400/60 hidden md:block">
-          <Heart className="w-8 h-8 fill-pink-300/40" />
-        </div>
-        <div ref={floatingStarRef} className="absolute top-48 right-[10%] text-amber-400/70 hidden md:block">
-          <Star className="w-9 h-9 fill-amber-300/50" />
-        </div>
-        <div className="absolute bottom-32 left-[12%] text-sky-400/60 hidden lg:block animate-pulse">
-          <Sparkles className="w-7 h-7" />
-        </div>
-        <div ref={floatingSmileRef} className="absolute bottom-24 right-[14%] text-emerald-400/60 hidden lg:block">
-          <Smile className="w-8 h-8" />
-        </div>
+        {/* Poster fallback when video missing / reduced motion */}
+        {(videoFailed || prefersReduced || !playing) && (
+          <img
+            src={ASSETS.hero.poster}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+              playing && !videoFailed && !prefersReduced ? 'opacity-0' : 'opacity-100'
+            }`}
+            aria-hidden
+          />
+        )}
+
+        <div
+          data-vh="overlay"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-slate-950/25"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-          {/* Left Column */}
-          <div className="lg:col-span-7 text-center lg:text-left space-y-5 sm:space-y-6">
-            <div
-              data-hero="badge"
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-pink-100/90 text-pink-700 text-xs sm:text-sm font-bold border border-pink-200/80 shadow-xs"
-            >
-              <Sparkles
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-600 animate-spin"
-                style={{ animationDuration: '6s' }}
-              />
-              <span>{HERO_DATA.anniversaryBadge}</span>
-            </div>
-
-            <h1
-              data-hero="headline"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]"
-            >
-              {HERO_DATA.headlinePrefix}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pink-600)] via-[var(--color-rose-500)] to-[var(--color-amber-500)]">
-                {HERO_DATA.headlineEmphasis}
-              </span>{' '}
-              {HERO_DATA.headlineSuffix}
+      {/* Content — brand-first, sparse */}
+      <div className="relative z-10 flex min-h-dvh flex-col justify-end pb-16 pt-28 sm:pb-20 sm:pt-32">
+        <div className="sl-container max-w-4xl">
+          <div data-vh="brand" className="space-y-4 sm:space-y-5">
+            <p className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-amber-200/90">
+              <Sparkles className="h-4 w-4" aria-hidden />
+              {HERO_DATA.anniversaryBadge}
+            </p>
+            <h1 className="font-display text-[clamp(2.75rem,8vw,5.5rem)] font-extrabold leading-[1.05] tracking-tight text-white">
+              Spread Love
             </h1>
-
-            <p
-              data-hero="sub"
-              className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium"
-            >
+            <RainbowArc variant="stripe" className="max-w-[12rem] sm:max-w-[16rem]" />
+            <p data-vh="line" className="max-w-xl text-base sm:text-lg font-medium text-white/85 leading-relaxed">
               {HERO_DATA.subtext}
             </p>
-
-            {/* Action Buttons Hub */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
-              <Button
-                data-hero="cta"
-                variant="primary"
-                size="lg"
-                href="#love-world"
-                icon={<ArrowRight className="w-4 h-4" />}
-                className="w-full sm:w-auto"
-              >
-                {HERO_DATA.primaryCta}
-              </Button>
-
-              <Button
-                data-hero="cta"
-                variant="outline"
-                size="lg"
-                href="#timeline"
-                icon={<Compass className="w-4 h-4 text-pink-500" />}
-                iconPosition="left"
-                className="w-full sm:w-auto bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-              >
-                {HERO_DATA.secondaryCta}
-              </Button>
-
-              <Button
-                data-hero="cta"
-                variant="secondary"
-                size="lg"
-                onClick={onOpenVideo}
-                icon={
-                  <span className="w-6 h-6 rounded-full bg-amber-950/10 flex items-center justify-center">
-                    <Play className="w-3 h-3 fill-amber-950 text-amber-950 translate-x-0.5" />
-                  </span>
-                }
-                iconPosition="left"
-                className="w-full sm:w-auto cursor-pointer"
-              >
-                Watch Story Video
-              </Button>
-            </div>
-
-            {/* Companions Row */}
-            <div
-              data-hero="companions"
-              className="pt-4 border-t border-pink-100/60 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4"
-            >
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Beloved Companions:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto">
-                {primaryCharacters.map((char) => (
-                  <button
-                    key={char.id}
-                    onClick={() => onSelectCharacter(char)}
-                    className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl bg-white border border-pink-100 hover:border-pink-300 hover:shadow-sm transition-all text-xs font-semibold text-slate-700 group min-h-[40px] cursor-pointer"
-                  >
-                    <div className="w-6 h-6 rounded-full overflow-hidden bg-pink-100 shrink-0">
-                      <img
-                        src={char.avatar}
-                        alt={char.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="group-hover:text-pink-600 truncate">{char.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
-          {/* Right Column: Hero Artwork Box */}
-          <div className="lg:col-span-5 relative w-full max-w-lg mx-auto lg:max-w-none pt-2 sm:pt-4">
-            <div data-hero="artwork" className="relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-900 group aspect-4/3 sm:aspect-square">
-                <img
-                  src={heroArtwork}
-                  alt="LOVE WORLD Kids Universe"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Button
+              data-vh="cta"
+              variant="primary"
+              size="lg"
+              onClick={togglePlay}
+              icon={
+                playing && !videoFailed ? (
+                  <Pause className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4 fill-current" />
+                )
+              }
+              iconPosition="left"
+              className="cursor-pointer"
+            >
+              {playing && !videoFailed ? 'Pause' : HERO_DATA.videoBadge}
+            </Button>
 
-                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-white/80 shadow-md z-10">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-pink-600 block">
-                        Flagship Showcase
-                      </span>
-                      <h3 className="font-extrabold text-sm sm:text-base text-slate-900 truncate">
-                        LOVE WORLD
-                      </h3>
-                      <p className="text-[11px] sm:text-xs text-slate-600 line-clamp-1">
-                        Floating islands of kindness & plush doll adventures
-                      </p>
-                    </div>
-                    <button
-                      onClick={onOpenVideo}
-                      className="p-2.5 sm:p-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white shadow-sm transition-transform active:scale-95 shrink-0 cursor-pointer"
-                      title="Play Preview"
-                      aria-label="Play Preview"
-                    >
-                      <Play className="w-4 h-4 fill-white" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Character Badges */}
+            {!videoFailed && (
               <button
-                ref={dollBadgeRef}
-                onMouseEnter={() => handleCharacterHover(dollBadgeRef.current)}
-                onClick={() => onSelectCharacter(primaryCharacters[0])}
-                className="absolute -top-3 -right-2 sm:-top-5 sm:-right-4 p-2 sm:p-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-pink-200 shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-left flex items-center gap-2.5 z-20 group cursor-pointer"
+                data-vh="cta"
+                type="button"
+                onClick={toggleMute}
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-colors cursor-pointer"
+                aria-label={muted ? 'Unmute video' : 'Mute video'}
               >
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl overflow-hidden border-2 border-pink-400 shadow-xs shrink-0">
-                  <img
-                    src={primaryCharacters[0].avatar}
-                    alt={primaryCharacters[0].name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="pr-1">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs font-bold text-slate-900 group-hover:text-pink-600 truncate max-w-[110px] sm:max-w-none">
-                      Spread Love Doll
-                    </span>
-                    <Heart className="w-3 h-3 text-pink-500 fill-pink-500 shrink-0" />
-                  </div>
-                  <span className="text-[10px] font-semibold text-pink-600">Iconic Companion ★</span>
-                </div>
+                {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
               </button>
+            )}
 
-              <button
-                ref={belinhaBadgeRef}
-                onMouseEnter={() => handleCharacterHover(belinhaBadgeRef.current)}
-                onClick={() => onSelectCharacter(primaryCharacters[1])}
-                className="absolute top-1/3 -left-3 sm:-left-5 p-2 sm:p-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-amber-200 shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-left flex items-center gap-2.5 z-20 group cursor-pointer"
-              >
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl overflow-hidden border-2 border-amber-400 shadow-xs shrink-0">
-                  <img
-                    src={primaryCharacters[1].avatar}
-                    alt={primaryCharacters[1].name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="pr-1">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs font-bold text-slate-900 group-hover:text-amber-600">
-                      Belinha
-                    </span>
-                    <span className="text-xs">🐾</span>
-                  </div>
-                  <span className="text-[10px] font-semibold text-amber-600">Joyful Golden Dog</span>
-                </div>
-              </button>
-            </div>
+            <Button
+              data-vh="cta"
+              variant="outline"
+              size="lg"
+              href="#intro"
+              className="border-white/40 bg-white/10 text-white hover:bg-white/20 cursor-pointer"
+            >
+              Enter the world
+            </Button>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={scrollNext}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors cursor-pointer min-h-11"
+          aria-label="Scroll to introduction"
+        >
+          <ArrowDown className="h-5 w-5 animate-bounce" style={{ animationDuration: '2s' }} />
+        </button>
       </div>
     </section>
   );

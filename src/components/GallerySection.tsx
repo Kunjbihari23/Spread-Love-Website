@@ -84,7 +84,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage })
               badge="Visual Archive & Artworks"
               badgeIcon={<Image className="w-3.5 h-3.5" />}
               title="Multimedia Creative Gallery"
-              subtitle="A curated retrospective of handmade doll prototypes, watercolor background paintings, studio milestones, and early sketchbook drafts."
+              subtitle="Curated client photographs and artwork — Belinha, Sheila, Little Sheila, and colorful world moments."
               align="left"
               className="mb-0 max-w-none"
             />

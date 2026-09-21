@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
-import { BookOpen, Calendar, Clock, ArrowRight } from 'lucide-react';
+import { BookOpen, Calendar, Clock, ArrowRight, ExternalLink } from 'lucide-react';
 import { useGSAP, whenMotionOk, scrollReveal } from '../lib/motion';
 import { BLOG_POSTS_DATA } from '../data/mockData';
+import { OLD_SITE } from '../data/clientAssets';
 import { BlogPost } from '../types';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -70,6 +71,15 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
               >
                 Read Latest Post
               </Button>
+              <a
+                href={OLD_SITE.blog}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 text-sm font-bold text-white hover:bg-white/20 transition-colors cursor-pointer"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Full blog on lovestar.world
+              </a>
             </div>
           </div>
         </div>

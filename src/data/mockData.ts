@@ -6,7 +6,7 @@ export const HERO_DATA = {
   headlinePrefix: "Spread Love",
   headlineEmphasis: "A Colorful Creative World",
   headlineSuffix: "Built from Heart & Imagination.",
-  subtext: "Welcome to Sheila Rocha's joyful universe — characters, Belinha, games, and a decade of creating with love. Final stories and dates will be updated as the client provides them.",
+  subtext: "A colorful creative universe — Sheila Rocha, Belinha, characters, and ten years of love.",
   primaryCta: "Enter LOVE WORLD",
   secondaryCta: "Discover Our Story",
   videoBadge: "Play LOVE WORLD Video",
@@ -70,9 +70,9 @@ export const CHARACTERS_DATA: Character[] = [
   {
     id: "cosmic-pip",
     name: "Cosmic Pip",
-    subtitle: "The Starlight Stardust Sprite",
-    role: "Night-Sky Guide & Dream Weaver",
-    bio: "A miniature celestial creature who fell from a falling star into the Love World kingdom. Pip glows in soft pastel lavender to guide youngsters through bedtime anxieties and turn night into calm wonder.",
+    subtitle: "Placeholder character",
+    role: "Character details coming soon",
+    bio: "Placeholder — final name, story, and artwork will be provided by the client.",
     image: ASSETS.colorful.rainbowSweets,
     avatar: ASSETS.colorful.rainbowSweets,
     color: "#845EC2",
@@ -88,9 +88,9 @@ export const CHARACTERS_DATA: Character[] = [
   {
     id: "sunny-spark",
     name: "Sunny Spark",
-    subtitle: "The Sunflower Melody Spirit",
-    role: "Musical Virtuoso & Rhythm Fairy",
-    bio: "Dancing on piano keys and bouncing on drum skins, Sunny Spark turns laughter into musical notes. She teaches children how rhythm and harmony connect hearts across languages.",
+    subtitle: "Placeholder character",
+    role: "Character details coming soon",
+    bio: "Placeholder — final name, story, and artwork will be provided by the client.",
     image: ASSETS.creator.sandHeart,
     avatar: ASSETS.creator.sandHeart,
     color: "#38B6FF",
@@ -106,11 +106,11 @@ export const CHARACTERS_DATA: Character[] = [
   {
     id: "barnaby-bear",
     name: "Barnaby Bear",
-    subtitle: "The Gentle Honey Baker",
-    role: "Kitchen Tinkerer & Storyteller",
-    bio: "The big-hearted guardian who loves kneading cloud-bread and telling fireside fables. He ensures every visitor to Love World feels welcomed, safe, and served with a warm bowl of sweet honey-porridge.",
-    image: ASSETS.belinha.birthday,
-    avatar: ASSETS.belinha.birthday,
+    subtitle: "Placeholder character",
+    role: "Character details coming soon",
+    bio: "Placeholder — final name, story, and artwork will be provided by the client. (Belinha photos stay in Belinha’s section only.)",
+    image: ASSETS.creator.portrait,
+    avatar: ASSETS.creator.portrait,
     color: "#E07A5F",
     bgGradient: "from-orange-500/20 via-rose-300/10 to-transparent",
     badge: "Gentle Giant 🧸",
@@ -375,34 +375,34 @@ export const GALLERY_DATA: GalleryItem[] = [
     title: "Little Sheila",
     category: "characters",
     image: ASSETS.characters.littleSheila,
-    caption: "Client artwork — Little Sheila, a joyful character from the Spread Love universe.",
+    caption: "Client artwork — Little Sheila.",
     year: "—",
-    tags: ["Little Sheila", "Artwork", "Characters"]
+    tags: ["Little Sheila", "Artwork"]
   },
   {
     id: "g2",
-    title: "My Little Belinha",
+    title: "Belinha · Star Hat",
     category: "characters",
     image: ASSETS.belinha.starHat,
-    caption: "The real Belinha — best friend and muse, star hat and all.",
+    caption: "The real Belinha — best friend and muse.",
     year: "—",
-    tags: ["Belinha", "Real Life", "Characters"]
+    tags: ["Belinha", "Real Life"]
   },
   {
     id: "g3",
-    title: "A Colorful World",
+    title: "Rainbow Sweets",
     category: "artwork",
     image: ASSETS.colorful.rainbowSweets,
-    caption: "Rainbow sweets, toys, and playful color — the visual spirit of Spread Love.",
+    caption: "Rainbow sweets and playful color.",
     year: "—",
-    tags: ["Rainbow", "Color", "Play"]
+    tags: ["Rainbow", "Color"]
   },
   {
     id: "g4",
     title: "Heart in the Sand",
     category: "celebration",
     image: ASSETS.creator.sandHeart,
-    caption: "Sheila and Belinha — a heart drawn in the sand.",
+    caption: "Sheila and Belinha — a heart in the sand.",
     year: "—",
     tags: ["Creator", "Belinha", "Beach"]
   },
@@ -411,18 +411,18 @@ export const GALLERY_DATA: GalleryItem[] = [
     title: "Golden Hour Belinha",
     category: "characters",
     image: ASSETS.belinha.sunsetHeld,
-    caption: "Belinha lifted toward the sunset — pure joy.",
+    caption: "Belinha lifted toward the sunset.",
     year: "—",
-    tags: ["Belinha", "Beach", "Sunset"]
+    tags: ["Belinha", "Sunset"]
   },
   {
     id: "g6",
     title: "Sandcastle Companion",
-    category: "artwork",
+    category: "celebration",
     image: ASSETS.belinha.sandcastle,
-    caption: "Belinha posing with a beach sandcastle.",
+    caption: "Belinha with a beach sandcastle.",
     year: "—",
-    tags: ["Belinha", "Beach", "Summer"]
+    tags: ["Belinha", "Beach"]
   },
   {
     id: "g7",
@@ -431,7 +431,7 @@ export const GALLERY_DATA: GalleryItem[] = [
     image: ASSETS.creator.sunset,
     caption: "Sheila Rocha with Belinha at sunset.",
     year: "—",
-    tags: ["Creator", "Belinha", "Portrait"]
+    tags: ["Creator", "Belinha"]
   },
   {
     id: "g8",
@@ -440,7 +440,43 @@ export const GALLERY_DATA: GalleryItem[] = [
     image: ASSETS.belinha.jetski,
     caption: "A playful day at the beach with Belinha.",
     year: "—",
-    tags: ["Belinha", "Beach", "Joy"]
+    tags: ["Belinha", "Beach"]
+  },
+  {
+    id: "g9",
+    title: "Sheila · Red Hat",
+    category: "celebration",
+    image: ASSETS.creator.portrait,
+    caption: "Sheila Rocha — creator portrait.",
+    year: "—",
+    tags: ["Creator", "Portrait"]
+  },
+  {
+    id: "g10",
+    title: "Belinha · Sunset Profile",
+    category: "characters",
+    image: ASSETS.belinha.sunsetProfile,
+    caption: "Belinha in golden light.",
+    year: "—",
+    tags: ["Belinha", "Portrait"]
+  },
+  {
+    id: "g11",
+    title: "Belinha · Beads & Sunflowers",
+    category: "characters",
+    image: ASSETS.belinha.beads,
+    caption: "Belinha with beads and sunflowers.",
+    year: "—",
+    tags: ["Belinha", "Joy"]
+  },
+  {
+    id: "g12",
+    title: "Belinha · Birthday",
+    category: "celebration",
+    image: ASSETS.belinha.birthday,
+    caption: "A birthday moment with Belinha.",
+    year: "—",
+    tags: ["Belinha", "Celebration"]
   }
 ];
 
