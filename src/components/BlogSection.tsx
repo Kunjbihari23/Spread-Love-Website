@@ -68,7 +68,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
                 icon={<ArrowRight className="w-4 h-4" />}
                 className="w-full sm:w-auto cursor-pointer"
               >
-                Read Latest 10-Yr Essay
+                Read Latest Post
               </Button>
             </div>
           </div>
@@ -76,13 +76,14 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectPost }) => {
 
         {/* Recent Article Cards Grid */}
         <div data-blog="grid" className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {BLOG_POSTS_DATA.map((post) => (
+          {BLOG_POSTS_DATA.slice(0, 6).map((post) => (
             <Card
               key={post.id}
               data-blog="card"
+              padded={false}
               elevation="interactive"
               onClick={() => onSelectPost(post)}
-              className="p-0 overflow-hidden cursor-pointer bg-slate-50 hover:bg-white border-slate-200/80 flex flex-col justify-between group"
+              className="overflow-hidden cursor-pointer bg-slate-50 hover:bg-white border-slate-200/80 flex flex-col justify-between group"
             >
               <div>
                 <div className="relative aspect-16/10 overflow-hidden bg-slate-200">

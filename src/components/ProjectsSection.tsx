@@ -113,9 +113,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             <Card
               key={project.id}
               data-pj="card"
+              padded={false}
               elevation="interactive"
               onClick={() => onSelectProject(project)}
-              className="p-0 overflow-hidden cursor-pointer flex flex-col justify-between group bg-slate-50 hover:bg-white"
+              className="overflow-hidden cursor-pointer flex flex-col justify-between group bg-slate-50 hover:bg-white"
             >
               <div>
                 <div className="relative aspect-16/10 overflow-hidden bg-slate-900">

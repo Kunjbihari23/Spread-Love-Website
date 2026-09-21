@@ -4,7 +4,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   elevation?: 'none' | 'sm' | 'md' | 'lg' | 'interactive';
   glass?: boolean;
   border?: boolean;
-  /** Default padding. Set false for flush media cards (Tailwind cannot override base p-* via className). */
+  /** Default padding. Media cards MUST use padded={false} — Tailwind className "p-0" cannot override base p-*. */
   padded?: boolean;
   children: React.ReactNode;
   className?: string;

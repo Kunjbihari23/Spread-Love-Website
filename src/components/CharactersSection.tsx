@@ -105,9 +105,10 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({
               <Card
                 key={char.id}
                 data-ch="hero-card"
+                padded={false}
                 elevation="interactive"
                 onClick={() => onSelectCharacter(char)}
-                className={`cursor-pointer rounded-3xl p-5 sm:p-8 bg-gradient-to-br ${
+                className={`cursor-pointer p-5 sm:p-8 bg-gradient-to-br ${
                   char.id === 'spread-love-doll'
                     ? 'from-pink-50 via-rose-50/60 to-white border-2 border-pink-300'
                     : 'from-amber-50 via-yellow-50/60 to-white border-2 border-amber-300'
@@ -188,34 +189,37 @@ export const CharactersSection: React.FC<CharactersSectionProps> = ({
               <Card
                 key={char.id}
                 data-ch="roster-card"
+                padded={false}
                 elevation="interactive"
                 onClick={() => onSelectCharacter(char)}
-                className="cursor-pointer rounded-3xl p-5 bg-slate-50 hover:bg-white flex flex-col justify-between group"
+                className="cursor-pointer overflow-hidden bg-slate-50 hover:bg-white flex flex-col justify-between group"
               >
                 <div>
-                  <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-slate-200 border-2 border-white shadow-xs">
+                  <div className="relative aspect-square overflow-hidden bg-slate-200">
                     <img
                       src={char.image}
                       alt={char.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-black/60 text-white backdrop-blur-xs">
+                    <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-black/60 text-white backdrop-blur-xs">
                       {char.badge}
                     </span>
                   </div>
 
-                  <h4 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-pink-600 transition-colors">
-                    {char.name}
-                  </h4>
-                  <p className="text-xs font-medium text-pink-600 mb-1.5">
-                    {char.role}
-                  </p>
-                  <p className="text-xs text-slate-600 line-clamp-2">
-                    {char.bio}
-                  </p>
+                  <div className="p-4 sm:p-5 space-y-1.5">
+                    <h4 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-pink-600 transition-colors">
+                      {char.name}
+                    </h4>
+                    <p className="text-xs font-medium text-pink-600">
+                      {char.role}
+                    </p>
+                    <p className="text-xs text-slate-600 line-clamp-2">
+                      {char.bio}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-pink-600">
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-pink-600">
                   <span>Meet Friend</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>

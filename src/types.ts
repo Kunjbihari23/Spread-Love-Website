@@ -82,6 +82,8 @@ export interface BlogPost {
   author: string;
   tags: string[];
   category: string;
+  /** Original post on lovestar.world, when available */
+  sourceUrl?: string;
 }
 
 export interface CelebrationWish {

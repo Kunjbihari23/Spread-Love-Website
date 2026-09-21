@@ -268,7 +268,7 @@ export const Modals: React.FC<ModalsProps> = ({
         )}
       </Modal>
 
-      {/* 5. BLOG POST READER MODAL */}
+      {/* 5. BLOG POST READER MODAL — full scraped detail */}
       <Modal
         isOpen={Boolean(activeBlogPost)}
         onClose={onCloseBlogPost}
@@ -276,32 +276,56 @@ export const Modals: React.FC<ModalsProps> = ({
         title={activeBlogPost?.title}
       >
         {activeBlogPost && (
-          <div className="space-y-4">
+          <article className="space-y-5">
             <div className="relative aspect-16/9 rounded-2xl overflow-hidden bg-slate-900">
               <img
                 src={activeBlogPost.coverImage}
                 alt={activeBlogPost.title}
                 className="w-full h-full object-cover"
               />
+              {activeBlogPost.category && (
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-white/95 text-slate-900 shadow-xs">
+                  {activeBlogPost.category}
+                </span>
+              )}
             </div>
 
-            <div className="flex items-center gap-3 text-xs text-slate-500">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-pink-500" />
                 {activeBlogPost.date}
               </span>
-              <span>•</span>
+              <span aria-hidden>•</span>
+              <span>{activeBlogPost.readTime}</span>
+              <span aria-hidden>•</span>
               <span>By {activeBlogPost.author}</span>
             </div>
 
-            <div className="text-slate-700 text-xs sm:text-base leading-relaxed space-y-3">
-              {Array.isArray(activeBlogPost.content) ? (
-                activeBlogPost.content.map((para, idx) => <p key={idx}>{para}</p>)
-              ) : (
-                <p>{activeBlogPost.content}</p>
-              )}
+            <div className="text-slate-700 text-sm sm:text-base leading-relaxed space-y-4">
+              {(Array.isArray(activeBlogPost.content)
+                ? activeBlogPost.content
+                : [activeBlogPost.content]
+              ).map((para, idx) => (
+                <p key={idx} className="whitespace-pre-wrap">
+                  {para}
+                </p>
+              ))}
             </div>
-          </div>
+
+            {activeBlogPost.sourceUrl && (
+              <div className="pt-4 border-t border-slate-100">
+                <a
+                  href={activeBlogPost.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-pink-600 hover:text-pink-700 cursor-pointer"
+                >
+                  View original on lovestar.world
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            )}
+          </article>
         )}
       </Modal>
 

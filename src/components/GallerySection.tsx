@@ -104,9 +104,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectImage })
             <Card
               key={item.id}
               data-gal="item"
+              padded={false}
               elevation="interactive"
               onClick={() => onSelectImage(item)}
-              className="p-0 overflow-hidden cursor-pointer flex flex-col group bg-white"
+              className="overflow-hidden cursor-pointer flex flex-col group bg-white"
             >
               <div className="relative aspect-4/3 overflow-hidden bg-slate-900">
                 <img

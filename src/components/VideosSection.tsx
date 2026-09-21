@@ -150,9 +150,10 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
             <Card
               key={vid.id}
               data-vid="card"
+              padded={false}
               elevation="interactive"
               onClick={() => onPlayVideo(vid)}
-              className="p-0 overflow-hidden cursor-pointer bg-slate-900 border-slate-800 flex flex-col group hover:border-pink-500/50"
+              className="overflow-hidden cursor-pointer bg-slate-900 border-slate-800 flex flex-col group hover:border-pink-500/50"
             >
               <div className="relative aspect-16/9 overflow-hidden bg-black">
                 <img
@@ -188,7 +189,7 @@ export const VideosSection: React.FC<VideosSectionProps> = ({ onPlayVideo }) => 
                 </div>
 
                 <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                  <span>{vid.views} views</span>
+                  <span>{vid.views}</span>
                   <span className="text-pink-400 font-semibold group-hover:underline">Play Now →</span>
                 </div>
               </div>
