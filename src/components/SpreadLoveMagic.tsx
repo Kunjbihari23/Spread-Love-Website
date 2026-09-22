@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Sparkles, Wand2 } from 'lucide-react';
 import gsap from 'gsap';
+import { RainbowSpaceTrail } from './RainbowSpaceTrail';
 
 interface SpreadLoveMagicProps {
   onSpreadLove?: () => void;
@@ -22,7 +23,7 @@ const SHAPES = ['50%', '50%', '4px'] as const;
 
 /** Floating wand: sprays rainbow confetti. Trail is off by default and opt-in. */
 export const SpreadLoveMagic: React.FC<SpreadLoveMagicProps> = ({ onSpreadLove }) => {
-  const [trailOn, setTrailOn] = useState(false);
+  const [trailOn, setTrailOn] = useState(true);
   const wandRef = useRef<HTMLButtonElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
   const reduced = useRef(false);
@@ -75,19 +76,6 @@ export const SpreadLoveMagic: React.FC<SpreadLoveMagicProps> = ({ onSpreadLove }
     });
   };
 
-  useEffect(() => {
-    if (!trailOn || reduced.current) return;
-    let last = 0;
-    const onMove = (e: MouseEvent) => {
-      const now = performance.now();
-      if (now - last < 55) return;
-      last = now;
-      spawn(e.clientX, e.clientY);
-    };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, [trailOn]);
-
   const burst = (e: React.MouseEvent) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -110,6 +98,7 @@ export const SpreadLoveMagic: React.FC<SpreadLoveMagicProps> = ({ onSpreadLove }
 
   return (
     <>
+      <RainbowSpaceTrail active={trailOn} />
       <div ref={layerRef} className="pointer-events-none fixed inset-0 z-50 overflow-hidden" aria-hidden />
 
       <div className="fixed bottom-6 right-4 z-40 flex items-center gap-2 sm:right-8">
@@ -119,7 +108,7 @@ export const SpreadLoveMagic: React.FC<SpreadLoveMagicProps> = ({ onSpreadLove }
           aria-pressed={trailOn}
           className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white bg-white text-[var(--text-secondary)] shadow-elevated transition-colors hover:text-[var(--text-primary)] cursor-pointer"
           style={trailOn ? { background: 'var(--rb-yellow)', color: '#241a00' } : undefined}
-          title={trailOn ? 'Turn off the sparkle trail' : 'Turn on the sparkle trail'}
+          title={trailOn ? 'Turn off the rainbow trail' : 'Turn on the rainbow trail'}
         >
           <Sparkles className="h-4 w-4" aria-hidden />
         </button>
